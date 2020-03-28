@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Torchscript: train in Python, run in C++ | Toast’s Blog</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Torchscript: train in Python, run in C++" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This article is mainly about serialize a pytorch model, and load it into C++." />
+<meta property="og:description" content="This article is mainly about serialize a pytorch model, and load it into C++." />
+<link rel="canonical" href="http://localhost:4000/technique/2020/01/09/torchscript.html" />
+<meta property="og:url" content="http://localhost:4000/technique/2020/01/09/torchscript.html" />
+<meta property="og:site_name" content="Toast’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-01-09T13:32:56+08:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/technique/2020/01/09/torchscript.html"},"description":"This article is mainly about serialize a pytorch model, and load it into C++.","@type":"BlogPosting","headline":"Torchscript: train in Python, run in C++","url":"http://localhost:4000/technique/2020/01/09/torchscript.html","datePublished":"2020-01-09T13:32:56+08:00","dateModified":"2020-01-09T13:32:56+08:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Toast's Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Toast&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Torchscript: train in Python, run in C++</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-01-09T13:32:56+08:00" itemprop="datePublished">Jan 9, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>This article is mainly about serialize a pytorch model, and load it into C++.</p>
+
+<h3 id="first-of-all-traced-your-model"><strong>First of all, traced your model</strong></h3>
+
+<p>“Trace” is a mechanism which pytorch used to record the behavior of neural nets. 
+To perform tracing, first you have to initialize your model, say that you have trained your model until it reach production level.</p>
+
+<pre><code class="language-python=">import torch
+from your.model.path import Model
+
+# assume that Model() is simply a network class which inherit nn.Module.
+model = Model()
+
+# of course you have to load the weight of your model.
+weight = torch.load("{your-weight-path}", map_location=torch.device("cpu"))
+model.load_state_dict(weight)
+</code></pre>
+
+<p>Then you have to make an <code class="highlighter-rouge">example</code>, i.e., a tensor that match the size of <code class="highlighter-rouge">model</code>’s input size. Note that you will have to set <code class="highlighter-rouge">model</code> to <code class="highlighter-rouge">eval()</code> for disabling training features since we are doing this for inference.</p>
+
+<pre><code class="language-python=">example = torch.rand(1, 3, 512, 512)
+model.eval()
+</code></pre>
+
+<p>After configuration, just simply called <code class="highlighter-rouge">torch.jit.trace</code> and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.</p>
+
+<pre><code class="language-python=">traced = torch.jit.trace(model, example, check_trace=True)
+traced.save("traced_model.pt")
+</code></pre>
+
+<p>You can make a simple check to see if the output is the same as the original model.</p>
+
+<pre><code class="language-python=">traced_model = torch.jit.load("traced_model.pt")
+
+model(example)
+# output: 
+# tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
+#        grad_fn=&lt;AddmmBackward&gt;)
+traced_model(example)
+# output: 
+# tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
+#        grad_fn=&lt;AddmmBackward&gt;)
+</code></pre>
+
+<p><em>note 1</em>
+The traced torchscript file does not seems to be platform-independent, if you trace it on Mac, and load it in Windows, unpredictable errors happens when loading model.</p>
+
+<p><em>note 2</em>
+As offical document stated, if your model contains control flows(<code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">else</code>), or any operations that depends on the value of <code class="highlighter-rouge">example</code>, i.e., <code class="highlighter-rouge">example</code> cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add <code class="highlighter-rouge">@torch.jit.script</code> in every function which contains control flow.</p>
+
+<p>e.g.</p>
+<pre><code class="language-python=">class Model(nn.Module):
+    ...
+    def forward(self, x):
+        ...
+        x = self._some_operation(x)
+        return x
+    @torch.jit.script
+    def _some_operation(self, x):
+        if x.sum() == 0:
+            ...
+        else:
+            ...
+</code></pre>
+
+<p><em>note 3</em>
+If your model contains custom <code class="highlighter-rouge">autograd.Function</code>, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like <a href="http://lernapparat.de/pytorch-traceable-differentiable/">this</a>, or you can simply try to use existed operations to build your custom operation rather than inherit <code class="highlighter-rouge">autograd.Function</code>.</p>
+
+<h3 id="second-write-c-inference-code"><strong>Second, write C++ inference code</strong></h3>
+
+<p>Though the official document has made it pretty stright forward, I do have some hard time building it in Windows (no problem in unix-like). So I will focus on the steps that need to perform on Windows:</p>
+
+<ol>
+  <li>Download source:
+    <ul>
+      <li>cpu:
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+</code></pre></div>        </div>
+      </li>
+      <li>cuda 9.0:
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Preparing main.cpp, here I will extend the <a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official example code</a>. The first part below is how c++ load a traced model, simply call <code class="highlighter-rouge">torch::jit::load()</code>.</li>
+</ol>
+
+<pre><code class="language-cpp=">#include &lt;torch/script.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;string.h&gt;
+
+int main() {
+  
+  std::string model_path = "traced_model.pt"
+
+  torch::jit::script::Module module;
+  try {
+    // Deserialize the ScriptModule from a file using torch::jit::load().
+    module = torch::jit::load(model_path);
+  }
+  catch (const c10::Error&amp; e) {
+    std::cerr &lt;&lt; "error loading the model\n";
+    return -1;
+  }
+
+  ...
+</code></pre>
+<p>Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) <code class="highlighter-rouge">int* data</code>, which is a way that C++ store image data. You can simply use <code class="highlighter-rouge">torch::from_blob()</code> to read the data into tensor, the sizes of it will be given in the second argument. The <code class="highlighter-rouge">options</code> is the way that <code class="highlighter-rouge">torch</code> used (as the third argument) to decide the type that will be read. You can find more in <a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">here</a>.</p>
+
+<pre><code class="language-cpp=">  ... (still in main())
+  
+  int height = 512;
+  int width = 512;
+  int* data = get_image_data(); // some api that you get your data.
+  
+  at::Tensor t;
+  auto options = c10::TensorOptions().dtype(torch::kShort);
+  t = torch::from_blob(data, { 
+    /*batch=*/1, 
+    /*channel=*/1, 
+    /*width=*/width, 
+    /*height=*/height 
+  }, options);
+  
+  ...
+</code></pre>
+
+<p>Lastly, you will have to initialize a vector of <code class="highlighter-rouge">torch::jit::IValue</code> as an input for a torchscript model. simply <code class="highlighter-rouge">push_back</code> a batch of tensor inside and you can run with <code class="highlighter-rouge">module.forward()</code>. You can get the result using <code class="highlighter-rouge">toTensor()</code>. There are some useful member functions of <code class="highlighter-rouge">Tensor</code>:</p>
+<ul>
+  <li>observe the shape by <code class="highlighter-rouge">sizes()</code></li>
+  <li>cast the value into primitive type by <code class="highlighter-rouge">item&lt;type&gt;()</code></li>
+</ul>
+
+<pre><code class="language-cpp=">  ... (still in main())
+  
+  std::vector&lt;torch::jit::IValue&gt; input;
+  input.push_back(data)
+  output = module.forward(input).toTensor();
+  
+  // say that we want to know the output of the first input(0), second dimension(1)
+  std::cout &lt;&lt; "result: " &lt;&lt; output[0][1].item&lt;float&gt;() &lt;&lt; std::endl;
+  
+  // observe the shape
+  std::cout &lt;&lt; output.sizes() &lt;&lt; std::endl;
+  
+  return 0;
+}
+</code></pre>
+
+<h3 id="finally-build-the-app"><strong>Finally, build the app</strong></h3>
+
+<ol>
+  <li>Preparing cmakefile
+ We will have to write a CMakeLists to build the app. If you have not seen any <code class="highlighter-rouge">CMakeLists.txt</code> before it would be a little timidating, but it can be dissect:
+    <ul>
+      <li><code class="highlighter-rouge">project</code>
+ The name of the app, usually the name of root directory.</li>
+      <li><code class="highlighter-rouge">set</code> 
+ Set any argument that is needed.</li>
+      <li><code class="highlighter-rouge">find_package</code>
+ Extremely handy if a third-party package has cmake support. cmake will find files like <code class="highlighter-rouge">{uppercase package name}Config.cmake</code> or <code class="highlighter-rouge">{lowercase package name}-config.cmake</code>. And You will not need to configure any lib path, include path by yourself. But you need to set <code class="highlighter-rouge">CMAKE_PREFIX_PATH</code> let cmake to know where to find those files. If you have multiple package you can set it like:  <code class="highlighter-rouge">CMAKE_PREFIX_PATH={path 1}:{path 2}</code></li>
+      <li><code class="highlighter-rouge">add_executable</code>
+ Like <code class="highlighter-rouge">g++ -o test-torch main.cpp</code>.</li>
+      <li>The <code class="highlighter-rouge">MSVC</code> part
+ For Windows OS only, provided by document.</li>
+    </ul>
+  </li>
+</ol>
+
+<pre><code class="language-cmake=">cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(test-torch)
+
+# if not set here, you should set it in argument with -D flag. e.g. -DCMAKE_PREFIX_PATH={libtorch path}
+set(CMAKE_PREFIX_PATH "{libtorch path}")
+# if not set, annoying warnings will pop up
+cmake_policy(SET CMP0054 NEW)
+
+find_package(Torch REQUIRED)
+
+add_executable(test-torch main.cpp)
+target_link_libraries(test-torch "${TORCH_LIBRARIES}")
+set_property(TARGET test-torch PROPERTY CXX_STANDARD 14)
+
+if (MSVC)
+  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+  add_custom_command(TARGET test-torch
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                     ${TORCH_DLLS}
+                     $&lt;TARGET_FILE_DIR:test-torch&gt;)
+endif (MSVC)
+</code></pre>
+
+<ol>
+  <li>Build</li>
+</ol>
+
+<pre><code class="language-bash=">mkdir build
+cd build
+# set CMAKE_PREFIX_PATH to let cmake knows where to find the cmake file of libtorch.
+cmake -DCMAKE_PREFIX_PATH="{libtorch path}" ..
+# OR if you set inside CMakeLists.txt you can alternatively run:
+cmake ..
+
+# build, equivalent to "make"
+cmake --build . --config Release
+
+# after building, dlls will be generated at the project root, 
+# copy them to the path in where the executable is.
+cp c:\...\test-torch\*.dll C:\...\test-torch\build\Release\
+cd Release
+
+# run!
+.\test-torch.exe
+</code></pre>
+
+<p>reference</p>
+<ul>
+  <li><a href="https://discuss.pytorch.org/t/error-running-libtorch-example-program/53980/6">build libtorch with cmake</a></li>
+  <li><a href="http://lernapparat.de/pytorch-traceable-differentiable/">custom op</a></li>
+  <li><a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official c++ tutorial</a></li>
+  <li><a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">tensorOption</a></li>
+</ul>
+
+  </div><a class="u-url" href="/technique/2020/01/09/torchscript.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Toast&#39;s Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Toast&#39;s Blog</li><li><a class="u-email" href="mailto:mrtoastcheng@gmail.com">mrtoastcheng@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/toastcheng"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">toastcheng</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>It&#39;s a place where I stash my notes about everything.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

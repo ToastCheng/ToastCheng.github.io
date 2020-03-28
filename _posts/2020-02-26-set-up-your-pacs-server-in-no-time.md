@@ -1,11 +1,10 @@
 ---
 layout: post
 title:  "Orthanc: setup your PACS server in no time"
-date:   2020-03-28 23:32:56 +0800
-categories: orthanc pacs
+date:   2020-02-26 13:32:56 +0800
+tags: orthanc pacs
+categories: technique
 ---
-# Orthanc: setup your PACS server in no time
-
 This article demonstrate how you can setup a PACS server using docker. 
 
 ### Using Docker
