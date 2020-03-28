@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Orthanc: setup your PACS server in no time - Toast</title>
-<meta name="description" content="This article demonstrate how you can setup a PACS server using docker.  ">
+<meta name="description" content="This article demonstrate how you can setup a PACS server using docker. ">
 
 
   <meta name="author" content="ShihCheng Tu">
@@ -23,7 +23,7 @@
 <meta property="og:url" content="/technique/set-up-your-pacs-server-in-no-time/">
 
 
-  <meta property="og:description" content="This article demonstrate how you can setup a PACS server using docker.  ">
+  <meta property="og:description" content="This article demonstrate how you can setup a PACS server using docker. ">
 
 
 
@@ -303,13 +303,13 @@
     osimis/orthanc:20.2.0
 </code></pre></div></div>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">8042</code> is the default port that orthanc serve. Use <code class="language-plaintext highlighter-rouge">-p</code> to export it.</li>
-  <li><code class="language-plaintext highlighter-rouge">{PATH_IN_YOUR_DISK}</code> is an arbitrary path that in host disk, which <code class="language-plaintext highlighter-rouge">Orthanc</code> will save the dicom information inside it, make sure you create it before you run. <code class="language-plaintext highlighter-rouge">/var/lib/orthanc/db/</code> is the default path live inside orthanc image.</li>
+  <li><code class="highlighter-rouge">8042</code> is the default port that orthanc serve. Use <code class="highlighter-rouge">-p</code> to export it.</li>
+  <li><code class="highlighter-rouge">{PATH_IN_YOUR_DISK}</code> is an arbitrary path that in host disk, which <code class="highlighter-rouge">Orthanc</code> will save the dicom information inside it, make sure you create it before you run. <code class="highlighter-rouge">/var/lib/orthanc/db/</code> is the default path live inside orthanc image.</li>
 </ul>
 
 <h3 id="using-docker-compose">Using Docker Compose</h3>
 
-<p>It is pretty similar to the <code class="language-plaintext highlighter-rouge">docker run</code> command.</p>
+<p>It is pretty similar to the <code class="highlighter-rouge">docker run</code> command.</p>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.7"</span>
 <span class="na">services</span><span class="pi">:</span>
   <span class="na">orthanc</span><span class="pi">:</span>
@@ -327,12 +327,12 @@
 <h3 id="configuration">Configuration</h3>
 
 <h4 id="method-1--via-env">Method 1 – via ENV</h4>
-<p>You can configure Orthanc for docker by setting the environment variable just like other docker image such as <code class="language-plaintext highlighter-rouge">mysql</code>, it’s a normal way to setup your docker image.</p>
+<p>You can configure Orthanc for docker by setting the environment variable just like other docker image such as <code class="highlighter-rouge">mysql</code>, it’s a normal way to setup your docker image.</p>
 
 <p>Below are the frequently used variable name:</p>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">AC_AUTHENTICATION_ENABLED</code></li>
-  <li><code class="language-plaintext highlighter-rouge">AC_REGISTERED_USERS</code></li>
+  <li><code class="highlighter-rouge">AC_AUTHENTICATION_ENABLED</code></li>
+  <li><code class="highlighter-rouge">AC_REGISTERED_USERS</code></li>
 </ul>
 
 <h4 id="method-2--via-hardcode">Method 2 – via hardcode</h4>
@@ -341,8 +341,8 @@
 <ol>
   <li>You have a lot to configure.</li>
   <li>You just cannot find the correct environment variable you want to set.</li>
-  <li>The variables are multiline, like <code class="language-plaintext highlighter-rouge">AC_REGISTERED_USERS</code>, which is hard to set:
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  AC_REGISTERED_USERS=
+  <li>The variables are multiline, like <code class="highlighter-rouge">AC_REGISTERED_USERS</code>, which is hard to set:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  AC_REGISTERED_USERS=
   {
   "foo": "baz"
   }
@@ -353,7 +353,7 @@
 
 <p>There are four existed configure files:</p>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/http.json</code>
+  <li><code class="highlighter-rouge">/etc/orthanc/http.json</code>
     <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"HttpTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="nl">"HttpsVerifyPeers"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
@@ -367,7 +367,7 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>    </div>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/remote-access.json</code>
+  <li><code class="highlighter-rouge">/etc/orthanc/remote-access.json</code>
     <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"RemoteAccessAllowed"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="nl">"AuthenticationEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
@@ -375,7 +375,7 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>    </div>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/storage.json</code>
+  <li><code class="highlighter-rouge">/etc/orthanc/storage.json</code>
     <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"StorageDirectory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/orthanc/db"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"MaximumStorageSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -384,16 +384,16 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>    </div>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/plugins.json</code>
+  <li><code class="highlighter-rouge">/etc/orthanc/plugins.json</code>
     <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"Plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"/usr/share/orthanc/plugins"</span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>    </div>
-    <p>Note that you <strong>cannot</strong> set the same key in two (or more) different config files. So if you add <code class="language-plaintext highlighter-rouge">RegisteredUsers</code> in your customized config <code class="language-plaintext highlighter-rouge">orthanc.json</code>, it will conflict with one in <code class="language-plaintext highlighter-rouge">remote-access.json</code>. Set it in <code class="language-plaintext highlighter-rouge">remote-access.json</code> instead.</p>
+    <p>Note that you <strong>cannot</strong> set the same key in two (or more) different config files. So if you add <code class="highlighter-rouge">RegisteredUsers</code> in your customized config <code class="highlighter-rouge">orthanc.json</code>, it will conflict with one in <code class="highlighter-rouge">remote-access.json</code>. Set it in <code class="highlighter-rouge">remote-access.json</code> instead.</p>
   </li>
 </ul>
 
-<p>You can edit those files or create new one inside <code class="language-plaintext highlighter-rouge">/etc/orthanc</code>. There are some ways to do that:</p>
+<p>You can edit those files or create new one inside <code class="highlighter-rouge">/etc/orthanc</code>. There are some ways to do that:</p>
 
 <h4 id="add-in-dockerfile">Add in Dockerfile</h4>
 <div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> osimis/orthanc:20.2.0</span>
@@ -410,15 +410,15 @@ docker run <span class="se">\</span>
 </code></pre></div></div>
 <p>But it might be tedious to build it, so you can consider mounting the complete configuration:</p>
 
-<h4 id="mount-when-docker-run">Mount when <code class="language-plaintext highlighter-rouge">docker run</code></h4>
+<h4 id="mount-when-docker-run">Mount when <code class="highlighter-rouge">docker run</code></h4>
 
-<p>Make sure you have all the necessary settings in <code class="language-plaintext highlighter-rouge">{CUSTOMIZE_CONFIG}/</code>, which includes:</p>
+<p>Make sure you have all the necessary settings in <code class="highlighter-rouge">{CUSTOMIZE_CONFIG}/</code>, which includes:</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/http.json</code></li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/remote-access.json</code></li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/storage.json</code></li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/orthanc/plugins.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/http.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/remote-access.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/storage.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/plugins.json</code></li>
 </ul>
 
 <p>and</p>
@@ -547,7 +547,6 @@ docker run <span class="se">\</span>
 </p>
     
     <p class="archive__item-excerpt" itemprop="description">This article is mainly about serialize a pytorch model, and load it into C++.
-
 </p>
   </article>
 </div>

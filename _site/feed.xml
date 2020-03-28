@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2020-03-28T12:58:45+08:00</updated><id>/feed.xml</id><title type="html">Toast</title><subtitle>An amazing website.</subtitle><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><entry><title type="html">Orthanc: setup your PACS server in no time</title><link href="/technique/set-up-your-pacs-server-in-no-time/" rel="alternate" type="text/html" title="Orthanc: setup your PACS server in no time" /><published>2020-02-25T13:32:56+08:00</published><updated>2020-02-25T13:32:56+08:00</updated><id>/technique/set-up-your-pacs-server-in-no-time</id><content type="html" xml:base="/technique/set-up-your-pacs-server-in-no-time/">&lt;p&gt;This article demonstrate how you can setup a PACS server using docker.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2020-03-28T13:05:32+08:00</updated><id>/feed.xml</id><title type="html">Toast</title><subtitle>An amazing website.</subtitle><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><entry><title type="html">Orthanc: setup your PACS server in no time</title><link href="/technique/set-up-your-pacs-server-in-no-time/" rel="alternate" type="text/html" title="Orthanc: setup your PACS server in no time" /><published>2020-02-25T13:32:56+08:00</published><updated>2020-02-25T13:32:56+08:00</updated><id>/technique/set-up-your-pacs-server-in-no-time</id><content type="html" xml:base="/technique/set-up-your-pacs-server-in-no-time/">&lt;p&gt;This article demonstrate how you can setup a PACS server using docker.&lt;/p&gt;
 
 &lt;h3 id=&quot;using-docker&quot;&gt;Using Docker&lt;/h3&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
@@ -9,13 +9,13 @@
     osimis/orthanc:20.2.0
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;8042&lt;/code&gt; is the default port that orthanc serve. Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p&lt;/code&gt; to export it.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{PATH_IN_YOUR_DISK}&lt;/code&gt; is an arbitrary path that in host disk, which &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Orthanc&lt;/code&gt; will save the dicom information inside it, make sure you create it before you run. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/orthanc/db/&lt;/code&gt; is the default path live inside orthanc image.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;8042&lt;/code&gt; is the default port that orthanc serve. Use &lt;code class=&quot;highlighter-rouge&quot;&gt;-p&lt;/code&gt; to export it.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;{PATH_IN_YOUR_DISK}&lt;/code&gt; is an arbitrary path that in host disk, which &lt;code class=&quot;highlighter-rouge&quot;&gt;Orthanc&lt;/code&gt; will save the dicom information inside it, make sure you create it before you run. &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/lib/orthanc/db/&lt;/code&gt; is the default path live inside orthanc image.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&quot;using-docker-compose&quot;&gt;Using Docker Compose&lt;/h3&gt;
 
-&lt;p&gt;It is pretty similar to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;It is pretty similar to the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run&lt;/code&gt; command.&lt;/p&gt;
 &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.7&quot;&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;orthanc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
@@ -33,12 +33,12 @@
 &lt;h3 id=&quot;configuration&quot;&gt;Configuration&lt;/h3&gt;
 
 &lt;h4 id=&quot;method-1--via-env&quot;&gt;Method 1 – via ENV&lt;/h4&gt;
-&lt;p&gt;You can configure Orthanc for docker by setting the environment variable just like other docker image such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mysql&lt;/code&gt;, it’s a normal way to setup your docker image.&lt;/p&gt;
+&lt;p&gt;You can configure Orthanc for docker by setting the environment variable just like other docker image such as &lt;code class=&quot;highlighter-rouge&quot;&gt;mysql&lt;/code&gt;, it’s a normal way to setup your docker image.&lt;/p&gt;
 
 &lt;p&gt;Below are the frequently used variable name:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AC_AUTHENTICATION_ENABLED&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AC_REGISTERED_USERS&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AC_AUTHENTICATION_ENABLED&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AC_REGISTERED_USERS&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&quot;method-2--via-hardcode&quot;&gt;Method 2 – via hardcode&lt;/h4&gt;
@@ -47,8 +47,8 @@
 &lt;ol&gt;
   &lt;li&gt;You have a lot to configure.&lt;/li&gt;
   &lt;li&gt;You just cannot find the correct environment variable you want to set.&lt;/li&gt;
-  &lt;li&gt;The variables are multiline, like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AC_REGISTERED_USERS&lt;/code&gt;, which is hard to set:
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  AC_REGISTERED_USERS=
+  &lt;li&gt;The variables are multiline, like &lt;code class=&quot;highlighter-rouge&quot;&gt;AC_REGISTERED_USERS&lt;/code&gt;, which is hard to set:
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  AC_REGISTERED_USERS=
   {
   &quot;foo&quot;: &quot;baz&quot;
   }
@@ -59,7 +59,7 @@
 
 &lt;p&gt;There are four existed configure files:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/http.json&lt;/code&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/http.json&lt;/code&gt;
     &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;HttpTimeout&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;HttpsVerifyPeers&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -73,7 +73,7 @@
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/remote-access.json&lt;/code&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/remote-access.json&lt;/code&gt;
     &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;RemoteAccessAllowed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;AuthenticationEnabled&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -81,7 +81,7 @@
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/storage.json&lt;/code&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/storage.json&lt;/code&gt;
     &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;StorageDirectory&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/var/lib/orthanc/db&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;MaximumStorageSize&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -90,16 +90,16 @@
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/plugins.json&lt;/code&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/plugins.json&lt;/code&gt;
     &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Plugins&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/usr/share/orthanc/plugins&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;Note that you &lt;strong&gt;cannot&lt;/strong&gt; set the same key in two (or more) different config files. So if you add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RegisteredUsers&lt;/code&gt; in your customized config &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orthanc.json&lt;/code&gt;, it will conflict with one in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;remote-access.json&lt;/code&gt;. Set it in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;remote-access.json&lt;/code&gt; instead.&lt;/p&gt;
+    &lt;p&gt;Note that you &lt;strong&gt;cannot&lt;/strong&gt; set the same key in two (or more) different config files. So if you add &lt;code class=&quot;highlighter-rouge&quot;&gt;RegisteredUsers&lt;/code&gt; in your customized config &lt;code class=&quot;highlighter-rouge&quot;&gt;orthanc.json&lt;/code&gt;, it will conflict with one in &lt;code class=&quot;highlighter-rouge&quot;&gt;remote-access.json&lt;/code&gt;. Set it in &lt;code class=&quot;highlighter-rouge&quot;&gt;remote-access.json&lt;/code&gt; instead.&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;You can edit those files or create new one inside &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc&lt;/code&gt;. There are some ways to do that:&lt;/p&gt;
+&lt;p&gt;You can edit those files or create new one inside &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc&lt;/code&gt;. There are some ways to do that:&lt;/p&gt;
 
 &lt;h4 id=&quot;add-in-dockerfile&quot;&gt;Add in Dockerfile&lt;/h4&gt;
 &lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; osimis/orthanc:20.2.0&lt;/span&gt;
@@ -116,15 +116,15 @@ docker run &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;But it might be tedious to build it, so you can consider mounting the complete configuration:&lt;/p&gt;
 
-&lt;h4 id=&quot;mount-when-docker-run&quot;&gt;Mount when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt;&lt;/h4&gt;
+&lt;h4 id=&quot;mount-when-docker-run&quot;&gt;Mount when &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run&lt;/code&gt;&lt;/h4&gt;
 
-&lt;p&gt;Make sure you have all the necessary settings in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{CUSTOMIZE_CONFIG}/&lt;/code&gt;, which includes:&lt;/p&gt;
+&lt;p&gt;Make sure you have all the necessary settings in &lt;code class=&quot;highlighter-rouge&quot;&gt;{CUSTOMIZE_CONFIG}/&lt;/code&gt;, which includes:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/http.json&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/remote-access.json&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/storage.json&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/orthanc/plugins.json&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/http.json&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/remote-access.json&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/storage.json&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/orthanc/plugins.json&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;and&lt;/p&gt;
@@ -155,13 +155,13 @@ To perform tracing, first you have to initialize your model, say that you have t
 &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;load_state_dict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Then you have to make an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example&lt;/code&gt;, i.e., a tensor that match the size of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;model&lt;/code&gt;’s input size. Note that you will have to set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;model&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eval()&lt;/code&gt; for disabling training features since we are doing this for inference.&lt;/p&gt;
+&lt;p&gt;Then you have to make an &lt;code class=&quot;highlighter-rouge&quot;&gt;example&lt;/code&gt;, i.e., a tensor that match the size of &lt;code class=&quot;highlighter-rouge&quot;&gt;model&lt;/code&gt;’s input size. Note that you will have to set &lt;code class=&quot;highlighter-rouge&quot;&gt;model&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;eval()&lt;/code&gt; for disabling training features since we are doing this for inference.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;example&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;512&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;512&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;After configuration, just simply called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;torch.jit.trace&lt;/code&gt; and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.&lt;/p&gt;
+&lt;p&gt;After configuration, just simply called &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.jit.trace&lt;/code&gt; and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;traced&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;example&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;check_trace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;traced&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;traced_model.pt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -185,7 +185,7 @@ To perform tracing, first you have to initialize your model, say that you have t
 The traced torchscript file does not seems to be platform-independent, if you trace it on Mac, and load it in Windows, unpredictable errors happens when loading model.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;note 2&lt;/em&gt;
-As offical document stated, if your model contains control flows(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;else&lt;/code&gt;), or any operations that depends on the value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example&lt;/code&gt;, i.e., &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example&lt;/code&gt; cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@torch.jit.script&lt;/code&gt; in every function which contains control flow.&lt;/p&gt;
+As offical document stated, if your model contains control flows(&lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;else&lt;/code&gt;), or any operations that depends on the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;example&lt;/code&gt;, i.e., &lt;code class=&quot;highlighter-rouge&quot;&gt;example&lt;/code&gt; cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add &lt;code class=&quot;highlighter-rouge&quot;&gt;@torch.jit.script&lt;/code&gt; in every function which contains control flow.&lt;/p&gt;
 
 &lt;p&gt;e.g.&lt;/p&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
@@ -203,7 +203,7 @@ As offical document stated, if your model contains control flows(&lt;code class=
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;em&gt;note 3&lt;/em&gt;
-If your model contains custom &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;autograd.Function&lt;/code&gt;, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like &lt;a href=&quot;http://lernapparat.de/pytorch-traceable-differentiable/&quot;&gt;this&lt;/a&gt;, or you can simply try to use existed operations to build your custom operation rather than inherit &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;autograd.Function&lt;/code&gt;.&lt;/p&gt;
+If your model contains custom &lt;code class=&quot;highlighter-rouge&quot;&gt;autograd.Function&lt;/code&gt;, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like &lt;a href=&quot;http://lernapparat.de/pytorch-traceable-differentiable/&quot;&gt;this&lt;/a&gt;, or you can simply try to use existed operations to build your custom operation rather than inherit &lt;code class=&quot;highlighter-rouge&quot;&gt;autograd.Function&lt;/code&gt;.&lt;/p&gt;
 
 &lt;h3 id=&quot;second-write-c-inference-code&quot;&gt;&lt;strong&gt;Second, write C++ inference code&lt;/strong&gt;&lt;/h3&gt;
 
@@ -213,16 +213,16 @@ If your model contains custom &lt;code class=&quot;language-plaintext highlighte
   &lt;li&gt;Download source:
     &lt;ul&gt;
       &lt;li&gt;cpu:
-        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+        &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
       &lt;/li&gt;
       &lt;li&gt;cuda 9.0:
-        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
+        &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
       &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;Preparing main.cpp, here I will extend the &lt;a href=&quot;https://pytorch.org/tutorials/advanced/cpp_export.html&quot;&gt;official example code&lt;/a&gt;. The first part below is how c++ load a traced model, simply call &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;torch::jit::load()&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Preparing main.cpp, here I will extend the &lt;a href=&quot;https://pytorch.org/tutorials/advanced/cpp_export.html&quot;&gt;official example code&lt;/a&gt;. The first part below is how c++ load a traced model, simply call &lt;code class=&quot;highlighter-rouge&quot;&gt;torch::jit::load()&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;torch/script.h&amp;gt;
@@ -246,7 +246,7 @@ If your model contains custom &lt;code class=&quot;language-plaintext highlighte
 
   &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;int* data&lt;/code&gt;, which is a way that C++ store image data. You can simply use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;torch::from_blob()&lt;/code&gt; to read the data into tensor, the sizes of it will be given in the second argument. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;options&lt;/code&gt; is the way that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;torch&lt;/code&gt; used (as the third argument) to decide the type that will be read. You can find more in &lt;a href=&quot;https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) &lt;code class=&quot;highlighter-rouge&quot;&gt;int* data&lt;/code&gt;, which is a way that C++ store image data. You can simply use &lt;code class=&quot;highlighter-rouge&quot;&gt;torch::from_blob()&lt;/code&gt; to read the data into tensor, the sizes of it will be given in the second argument. The &lt;code class=&quot;highlighter-rouge&quot;&gt;options&lt;/code&gt; is the way that &lt;code class=&quot;highlighter-rouge&quot;&gt;torch&lt;/code&gt; used (as the third argument) to decide the type that will be read. You can find more in &lt;a href=&quot;https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;still&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
   
@@ -266,10 +266,10 @@ If your model contains custom &lt;code class=&quot;language-plaintext highlighte
   &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Lastly, you will have to initialize a vector of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;torch::jit::IValue&lt;/code&gt; as an input for a torchscript model. simply &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;push_back&lt;/code&gt; a batch of tensor inside and you can run with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;module.forward()&lt;/code&gt;. You can get the result using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;toTensor()&lt;/code&gt;. There are some useful member functions of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Tensor&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Lastly, you will have to initialize a vector of &lt;code class=&quot;highlighter-rouge&quot;&gt;torch::jit::IValue&lt;/code&gt; as an input for a torchscript model. simply &lt;code class=&quot;highlighter-rouge&quot;&gt;push_back&lt;/code&gt; a batch of tensor inside and you can run with &lt;code class=&quot;highlighter-rouge&quot;&gt;module.forward()&lt;/code&gt;. You can get the result using &lt;code class=&quot;highlighter-rouge&quot;&gt;toTensor()&lt;/code&gt;. There are some useful member functions of &lt;code class=&quot;highlighter-rouge&quot;&gt;Tensor&lt;/code&gt;:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;observe the shape by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sizes()&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;cast the value into primitive type by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item&amp;lt;type&amp;gt;()&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;observe the shape by &lt;code class=&quot;highlighter-rouge&quot;&gt;sizes()&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;cast the value into primitive type by &lt;code class=&quot;highlighter-rouge&quot;&gt;item&amp;lt;type&amp;gt;()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;still&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
@@ -292,17 +292,17 @@ If your model contains custom &lt;code class=&quot;language-plaintext highlighte
 
 &lt;ol&gt;
   &lt;li&gt;Preparing cmakefile
- We will have to write a CMakeLists to build the app. If you have not seen any &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMakeLists.txt&lt;/code&gt; before it would be a little timidating, but it can be dissect:
+ We will have to write a CMakeLists to build the app. If you have not seen any &lt;code class=&quot;highlighter-rouge&quot;&gt;CMakeLists.txt&lt;/code&gt; before it would be a little timidating, but it can be dissect:
     &lt;ul&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;project&lt;/code&gt;
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;project&lt;/code&gt;
  The name of the app, usually the name of root directory.&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set&lt;/code&gt; 
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;set&lt;/code&gt; 
  Set any argument that is needed.&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;find_package&lt;/code&gt;
- Extremely handy if a third-party package has cmake support. cmake will find files like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{uppercase package name}Config.cmake&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{lowercase package name}-config.cmake&lt;/code&gt;. And You will not need to configure any lib path, include path by yourself. But you need to set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMAKE_PREFIX_PATH&lt;/code&gt; let cmake to know where to find those files. If you have multiple package you can set it like:  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMAKE_PREFIX_PATH={path 1}:{path 2}&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;add_executable&lt;/code&gt;
- Like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -o test-torch main.cpp&lt;/code&gt;.&lt;/li&gt;
-      &lt;li&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MSVC&lt;/code&gt; part
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;find_package&lt;/code&gt;
+ Extremely handy if a third-party package has cmake support. cmake will find files like &lt;code class=&quot;highlighter-rouge&quot;&gt;{uppercase package name}Config.cmake&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;{lowercase package name}-config.cmake&lt;/code&gt;. And You will not need to configure any lib path, include path by yourself. But you need to set &lt;code class=&quot;highlighter-rouge&quot;&gt;CMAKE_PREFIX_PATH&lt;/code&gt; let cmake to know where to find those files. If you have multiple package you can set it like:  &lt;code class=&quot;highlighter-rouge&quot;&gt;CMAKE_PREFIX_PATH={path 1}:{path 2}&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;add_executable&lt;/code&gt;
+ Like &lt;code class=&quot;highlighter-rouge&quot;&gt;g++ -o test-torch main.cpp&lt;/code&gt;.&lt;/li&gt;
+      &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;MSVC&lt;/code&gt; part
  For Windows OS only, provided by document.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;

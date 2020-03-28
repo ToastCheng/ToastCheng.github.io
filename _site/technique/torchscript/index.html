@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Torchscript: train in Python, run in C++ - Toast</title>
-<meta name="description" content="This article is mainly about serialize a pytorch model, and load it into C++.  ">
+<meta name="description" content="This article is mainly about serialize a pytorch model, and load it into C++. ">
 
 
   <meta name="author" content="ShihCheng Tu">
@@ -23,7 +23,7 @@
 <meta property="og:url" content="/technique/torchscript/">
 
 
-  <meta property="og:description" content="This article is mainly about serialize a pytorch model, and load it into C++.  ">
+  <meta property="og:description" content="This article is mainly about serialize a pytorch model, and load it into C++. ">
 
 
 
@@ -310,13 +310,13 @@ To perform tracing, first you have to initialize your model, say that you have t
 <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Then you have to make an <code class="language-plaintext highlighter-rouge">example</code>, i.e., a tensor that match the size of <code class="language-plaintext highlighter-rouge">model</code>’s input size. Note that you will have to set <code class="language-plaintext highlighter-rouge">model</code> to <code class="language-plaintext highlighter-rouge">eval()</code> for disabling training features since we are doing this for inference.</p>
+<p>Then you have to make an <code class="highlighter-rouge">example</code>, i.e., a tensor that match the size of <code class="highlighter-rouge">model</code>’s input size. Note that you will have to set <code class="highlighter-rouge">model</code> to <code class="highlighter-rouge">eval()</code> for disabling training features since we are doing this for inference.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="nb">eval</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>After configuration, just simply called <code class="language-plaintext highlighter-rouge">torch.jit.trace</code> and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.</p>
+<p>After configuration, just simply called <code class="highlighter-rouge">torch.jit.trace</code> and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">traced</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">traced</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">"traced_model.pt"</span><span class="p">)</span>
@@ -340,7 +340,7 @@ To perform tracing, first you have to initialize your model, say that you have t
 The traced torchscript file does not seems to be platform-independent, if you trace it on Mac, and load it in Windows, unpredictable errors happens when loading model.</p>
 
 <p><em>note 2</em>
-As offical document stated, if your model contains control flows(<code class="language-plaintext highlighter-rouge">if</code>, <code class="language-plaintext highlighter-rouge">else</code>), or any operations that depends on the value of <code class="language-plaintext highlighter-rouge">example</code>, i.e., <code class="language-plaintext highlighter-rouge">example</code> cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add <code class="language-plaintext highlighter-rouge">@torch.jit.script</code> in every function which contains control flow.</p>
+As offical document stated, if your model contains control flows(<code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">else</code>), or any operations that depends on the value of <code class="highlighter-rouge">example</code>, i.e., <code class="highlighter-rouge">example</code> cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add <code class="highlighter-rouge">@torch.jit.script</code> in every function which contains control flow.</p>
 
 <p>e.g.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -358,7 +358,7 @@ As offical document stated, if your model contains control flows(<code class="la
 </code></pre></div></div>
 
 <p><em>note 3</em>
-If your model contains custom <code class="language-plaintext highlighter-rouge">autograd.Function</code>, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like <a href="http://lernapparat.de/pytorch-traceable-differentiable/">this</a>, or you can simply try to use existed operations to build your custom operation rather than inherit <code class="language-plaintext highlighter-rouge">autograd.Function</code>.</p>
+If your model contains custom <code class="highlighter-rouge">autograd.Function</code>, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like <a href="http://lernapparat.de/pytorch-traceable-differentiable/">this</a>, or you can simply try to use existed operations to build your custom operation rather than inherit <code class="highlighter-rouge">autograd.Function</code>.</p>
 
 <h3 id="second-write-c-inference-code"><strong>Second, write C++ inference code</strong></h3>
 
@@ -368,16 +368,16 @@ If your model contains custom <code class="language-plaintext highlighter-rouge"
   <li>Download source:
     <ul>
       <li>cpu:
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
 </code></pre></div>        </div>
       </li>
       <li>cuda 9.0:
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
 </code></pre></div>        </div>
       </li>
     </ul>
   </li>
-  <li>Preparing main.cpp, here I will extend the <a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official example code</a>. The first part below is how c++ load a traced model, simply call <code class="language-plaintext highlighter-rouge">torch::jit::load()</code>.</li>
+  <li>Preparing main.cpp, here I will extend the <a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official example code</a>. The first part below is how c++ load a traced model, simply call <code class="highlighter-rouge">torch::jit::load()</code>.</li>
 </ol>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;torch/script.h&gt;
@@ -401,7 +401,7 @@ If your model contains custom <code class="language-plaintext highlighter-rouge"
 
   <span class="p">...</span>
 </code></pre></div></div>
-<p>Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) <code class="language-plaintext highlighter-rouge">int* data</code>, which is a way that C++ store image data. You can simply use <code class="language-plaintext highlighter-rouge">torch::from_blob()</code> to read the data into tensor, the sizes of it will be given in the second argument. The <code class="language-plaintext highlighter-rouge">options</code> is the way that <code class="language-plaintext highlighter-rouge">torch</code> used (as the third argument) to decide the type that will be read. You can find more in <a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">here</a>.</p>
+<p>Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) <code class="highlighter-rouge">int* data</code>, which is a way that C++ store image data. You can simply use <code class="highlighter-rouge">torch::from_blob()</code> to read the data into tensor, the sizes of it will be given in the second argument. The <code class="highlighter-rouge">options</code> is the way that <code class="highlighter-rouge">torch</code> used (as the third argument) to decide the type that will be read. You can find more in <a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">here</a>.</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">...</span> <span class="p">(</span><span class="n">still</span> <span class="n">in</span> <span class="n">main</span><span class="p">())</span>
   
@@ -421,10 +421,10 @@ If your model contains custom <code class="language-plaintext highlighter-rouge"
   <span class="p">...</span>
 </code></pre></div></div>
 
-<p>Lastly, you will have to initialize a vector of <code class="language-plaintext highlighter-rouge">torch::jit::IValue</code> as an input for a torchscript model. simply <code class="language-plaintext highlighter-rouge">push_back</code> a batch of tensor inside and you can run with <code class="language-plaintext highlighter-rouge">module.forward()</code>. You can get the result using <code class="language-plaintext highlighter-rouge">toTensor()</code>. There are some useful member functions of <code class="language-plaintext highlighter-rouge">Tensor</code>:</p>
+<p>Lastly, you will have to initialize a vector of <code class="highlighter-rouge">torch::jit::IValue</code> as an input for a torchscript model. simply <code class="highlighter-rouge">push_back</code> a batch of tensor inside and you can run with <code class="highlighter-rouge">module.forward()</code>. You can get the result using <code class="highlighter-rouge">toTensor()</code>. There are some useful member functions of <code class="highlighter-rouge">Tensor</code>:</p>
 <ul>
-  <li>observe the shape by <code class="language-plaintext highlighter-rouge">sizes()</code></li>
-  <li>cast the value into primitive type by <code class="language-plaintext highlighter-rouge">item&lt;type&gt;()</code></li>
+  <li>observe the shape by <code class="highlighter-rouge">sizes()</code></li>
+  <li>cast the value into primitive type by <code class="highlighter-rouge">item&lt;type&gt;()</code></li>
 </ul>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">...</span> <span class="p">(</span><span class="n">still</span> <span class="n">in</span> <span class="n">main</span><span class="p">())</span>
@@ -447,17 +447,17 @@ If your model contains custom <code class="language-plaintext highlighter-rouge"
 
 <ol>
   <li>Preparing cmakefile
- We will have to write a CMakeLists to build the app. If you have not seen any <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> before it would be a little timidating, but it can be dissect:
+ We will have to write a CMakeLists to build the app. If you have not seen any <code class="highlighter-rouge">CMakeLists.txt</code> before it would be a little timidating, but it can be dissect:
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">project</code>
+      <li><code class="highlighter-rouge">project</code>
  The name of the app, usually the name of root directory.</li>
-      <li><code class="language-plaintext highlighter-rouge">set</code> 
+      <li><code class="highlighter-rouge">set</code> 
  Set any argument that is needed.</li>
-      <li><code class="language-plaintext highlighter-rouge">find_package</code>
- Extremely handy if a third-party package has cmake support. cmake will find files like <code class="language-plaintext highlighter-rouge">{uppercase package name}Config.cmake</code> or <code class="language-plaintext highlighter-rouge">{lowercase package name}-config.cmake</code>. And You will not need to configure any lib path, include path by yourself. But you need to set <code class="language-plaintext highlighter-rouge">CMAKE_PREFIX_PATH</code> let cmake to know where to find those files. If you have multiple package you can set it like:  <code class="language-plaintext highlighter-rouge">CMAKE_PREFIX_PATH={path 1}:{path 2}</code></li>
-      <li><code class="language-plaintext highlighter-rouge">add_executable</code>
- Like <code class="language-plaintext highlighter-rouge">g++ -o test-torch main.cpp</code>.</li>
-      <li>The <code class="language-plaintext highlighter-rouge">MSVC</code> part
+      <li><code class="highlighter-rouge">find_package</code>
+ Extremely handy if a third-party package has cmake support. cmake will find files like <code class="highlighter-rouge">{uppercase package name}Config.cmake</code> or <code class="highlighter-rouge">{lowercase package name}-config.cmake</code>. And You will not need to configure any lib path, include path by yourself. But you need to set <code class="highlighter-rouge">CMAKE_PREFIX_PATH</code> let cmake to know where to find those files. If you have multiple package you can set it like:  <code class="highlighter-rouge">CMAKE_PREFIX_PATH={path 1}:{path 2}</code></li>
+      <li><code class="highlighter-rouge">add_executable</code>
+ Like <code class="highlighter-rouge">g++ -o test-torch main.cpp</code>.</li>
+      <li>The <code class="highlighter-rouge">MSVC</code> part
  For Windows OS only, provided by document.</li>
     </ul>
   </li>
@@ -636,7 +636,6 @@ cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt"
 </p>
     
     <p class="archive__item-excerpt" itemprop="description">This article demonstrate how you can setup a PACS server using docker.
-
 </p>
   </article>
 </div>
