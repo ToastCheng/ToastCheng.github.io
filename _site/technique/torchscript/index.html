@@ -1,0 +1,704 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Torchscript: train in Python, run in C++ - Toast</title>
+<meta name="description" content="This article is mainly about serialize a pytorch model, and load it into C++. ">
+
+
+  <meta name="author" content="ShihCheng Tu">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Toast">
+<meta property="og:title" content="Torchscript: train in Python, run in C++">
+<meta property="og:url" content="http://localhost:4000/technique/torchscript/">
+
+
+  <meta property="og:description" content="This article is mainly about serialize a pytorch model, and load it into C++. ">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-01-09T13:32:56+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/technique/torchscript/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "ShihCheng Tu",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Toast Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Toast
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">ShihCheng Tu</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>I am an <strong>amazing</strong> person.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Taipei, Taiwan</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:mrtoastcheng@gmail.com">
+            <meta itemprop="email" content="mrtoastcheng@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Torchscript: train in Python, run in C++">
+    <meta itemprop="description" content="This article is mainly about serialize a pytorch model, and load it into C++.">
+    <meta itemprop="datePublished" content="2020-01-09T13:32:56+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Torchscript: train in Python, run in C++
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This article is mainly about serialize a pytorch model, and load it into C++.</p>
+
+<h3 id="first-of-all-traced-your-model"><strong>First of all, traced your model</strong></h3>
+
+<p>“Trace” is a mechanism which pytorch used to record the behavior of neural nets. 
+To perform tracing, first you have to initialize your model, say that you have trained your model until it reach production level.</p>
+
+<pre><code class="language-python=">import torch
+from your.model.path import Model
+
+# assume that Model() is simply a network class which inherit nn.Module.
+model = Model()
+
+# of course you have to load the weight of your model.
+weight = torch.load("{your-weight-path}", map_location=torch.device("cpu"))
+model.load_state_dict(weight)
+</code></pre>
+
+<p>Then you have to make an <code class="highlighter-rouge">example</code>, i.e., a tensor that match the size of <code class="highlighter-rouge">model</code>’s input size. Note that you will have to set <code class="highlighter-rouge">model</code> to <code class="highlighter-rouge">eval()</code> for disabling training features since we are doing this for inference.</p>
+
+<pre><code class="language-python=">example = torch.rand(1, 3, 512, 512)
+model.eval()
+</code></pre>
+
+<p>After configuration, just simply called <code class="highlighter-rouge">torch.jit.trace</code> and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.</p>
+
+<pre><code class="language-python=">traced = torch.jit.trace(model, example, check_trace=True)
+traced.save("traced_model.pt")
+</code></pre>
+
+<p>You can make a simple check to see if the output is the same as the original model.</p>
+
+<pre><code class="language-python=">traced_model = torch.jit.load("traced_model.pt")
+
+model(example)
+# output: 
+# tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
+#        grad_fn=&lt;AddmmBackward&gt;)
+traced_model(example)
+# output: 
+# tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
+#        grad_fn=&lt;AddmmBackward&gt;)
+</code></pre>
+
+<p><em>note 1</em>
+The traced torchscript file does not seems to be platform-independent, if you trace it on Mac, and load it in Windows, unpredictable errors happens when loading model.</p>
+
+<p><em>note 2</em>
+As offical document stated, if your model contains control flows(<code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">else</code>), or any operations that depends on the value of <code class="highlighter-rouge">example</code>, i.e., <code class="highlighter-rouge">example</code> cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add <code class="highlighter-rouge">@torch.jit.script</code> in every function which contains control flow.</p>
+
+<p>e.g.</p>
+<pre><code class="language-python=">class Model(nn.Module):
+    ...
+    def forward(self, x):
+        ...
+        x = self._some_operation(x)
+        return x
+    @torch.jit.script
+    def _some_operation(self, x):
+        if x.sum() == 0:
+            ...
+        else:
+            ...
+</code></pre>
+
+<p><em>note 3</em>
+If your model contains custom <code class="highlighter-rouge">autograd.Function</code>, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like <a href="http://lernapparat.de/pytorch-traceable-differentiable/">this</a>, or you can simply try to use existed operations to build your custom operation rather than inherit <code class="highlighter-rouge">autograd.Function</code>.</p>
+
+<h3 id="second-write-c-inference-code"><strong>Second, write C++ inference code</strong></h3>
+
+<p>Though the official document has made it pretty stright forward, I do have some hard time building it in Windows (no problem in unix-like). So I will focus on the steps that need to perform on Windows:</p>
+
+<ol>
+  <li>Download source:
+    <ul>
+      <li>cpu:
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+</code></pre></div>        </div>
+      </li>
+      <li>cuda 9.0:
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://download.pytorch.org/libtorch/nightly/cu90/libtorch-shared-with-deps-latest.zip
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Preparing main.cpp, here I will extend the <a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official example code</a>. The first part below is how c++ load a traced model, simply call <code class="highlighter-rouge">torch::jit::load()</code>.</li>
+</ol>
+
+<pre><code class="language-cpp=">#include &lt;torch/script.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;string.h&gt;
+
+int main() {
+  
+  std::string model_path = "traced_model.pt"
+
+  torch::jit::script::Module module;
+  try {
+    // Deserialize the ScriptModule from a file using torch::jit::load().
+    module = torch::jit::load(model_path);
+  }
+  catch (const c10::Error&amp; e) {
+    std::cerr &lt;&lt; "error loading the model\n";
+    return -1;
+  }
+
+  ...
+</code></pre>
+<p>Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) <code class="highlighter-rouge">int* data</code>, which is a way that C++ store image data. You can simply use <code class="highlighter-rouge">torch::from_blob()</code> to read the data into tensor, the sizes of it will be given in the second argument. The <code class="highlighter-rouge">options</code> is the way that <code class="highlighter-rouge">torch</code> used (as the third argument) to decide the type that will be read. You can find more in <a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">here</a>.</p>
+
+<pre><code class="language-cpp=">  ... (still in main())
+  
+  int height = 512;
+  int width = 512;
+  int* data = get_image_data(); // some api that you get your data.
+  
+  at::Tensor t;
+  auto options = c10::TensorOptions().dtype(torch::kShort);
+  t = torch::from_blob(data, { 
+    /*batch=*/1, 
+    /*channel=*/1, 
+    /*width=*/width, 
+    /*height=*/height 
+  }, options);
+  
+  ...
+</code></pre>
+
+<p>Lastly, you will have to initialize a vector of <code class="highlighter-rouge">torch::jit::IValue</code> as an input for a torchscript model. simply <code class="highlighter-rouge">push_back</code> a batch of tensor inside and you can run with <code class="highlighter-rouge">module.forward()</code>. You can get the result using <code class="highlighter-rouge">toTensor()</code>. There are some useful member functions of <code class="highlighter-rouge">Tensor</code>:</p>
+<ul>
+  <li>observe the shape by <code class="highlighter-rouge">sizes()</code></li>
+  <li>cast the value into primitive type by <code class="highlighter-rouge">item&lt;type&gt;()</code></li>
+</ul>
+
+<pre><code class="language-cpp=">  ... (still in main())
+  
+  std::vector&lt;torch::jit::IValue&gt; input;
+  input.push_back(data)
+  output = module.forward(input).toTensor();
+  
+  // say that we want to know the output of the first input(0), second dimension(1)
+  std::cout &lt;&lt; "result: " &lt;&lt; output[0][1].item&lt;float&gt;() &lt;&lt; std::endl;
+  
+  // observe the shape
+  std::cout &lt;&lt; output.sizes() &lt;&lt; std::endl;
+  
+  return 0;
+}
+</code></pre>
+
+<h3 id="finally-build-the-app"><strong>Finally, build the app</strong></h3>
+
+<ol>
+  <li>Preparing cmakefile
+ We will have to write a CMakeLists to build the app. If you have not seen any <code class="highlighter-rouge">CMakeLists.txt</code> before it would be a little timidating, but it can be dissect:
+    <ul>
+      <li><code class="highlighter-rouge">project</code>
+ The name of the app, usually the name of root directory.</li>
+      <li><code class="highlighter-rouge">set</code> 
+ Set any argument that is needed.</li>
+      <li><code class="highlighter-rouge">find_package</code>
+ Extremely handy if a third-party package has cmake support. cmake will find files like <code class="highlighter-rouge">{uppercase package name}Config.cmake</code> or <code class="highlighter-rouge">{lowercase package name}-config.cmake</code>. And You will not need to configure any lib path, include path by yourself. But you need to set <code class="highlighter-rouge">CMAKE_PREFIX_PATH</code> let cmake to know where to find those files. If you have multiple package you can set it like:  <code class="highlighter-rouge">CMAKE_PREFIX_PATH={path 1}:{path 2}</code></li>
+      <li><code class="highlighter-rouge">add_executable</code>
+ Like <code class="highlighter-rouge">g++ -o test-torch main.cpp</code>.</li>
+      <li>The <code class="highlighter-rouge">MSVC</code> part
+ For Windows OS only, provided by document.</li>
+    </ul>
+  </li>
+</ol>
+
+<pre><code class="language-cmake=">cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(test-torch)
+
+# if not set here, you should set it in argument with -D flag. e.g. -DCMAKE_PREFIX_PATH={libtorch path}
+set(CMAKE_PREFIX_PATH "{libtorch path}")
+# if not set, annoying warnings will pop up
+cmake_policy(SET CMP0054 NEW)
+
+find_package(Torch REQUIRED)
+
+add_executable(test-torch main.cpp)
+target_link_libraries(test-torch "${TORCH_LIBRARIES}")
+set_property(TARGET test-torch PROPERTY CXX_STANDARD 14)
+
+if (MSVC)
+  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+  add_custom_command(TARGET test-torch
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                     ${TORCH_DLLS}
+                     $&lt;TARGET_FILE_DIR:test-torch&gt;)
+endif (MSVC)
+</code></pre>
+
+<ol>
+  <li>Build</li>
+</ol>
+
+<pre><code class="language-bash=">mkdir build
+cd build
+# set CMAKE_PREFIX_PATH to let cmake knows where to find the cmake file of libtorch.
+cmake -DCMAKE_PREFIX_PATH="{libtorch path}" ..
+# OR if you set inside CMakeLists.txt you can alternatively run:
+cmake ..
+
+# build, equivalent to "make"
+cmake --build . --config Release
+
+# after building, dlls will be generated at the project root, 
+# copy them to the path in where the executable is.
+cp c:\...\test-torch\*.dll C:\...\test-torch\build\Release\
+cd Release
+
+# run!
+.\test-torch.exe
+</code></pre>
+
+<p>reference</p>
+<ul>
+  <li><a href="https://discuss.pytorch.org/t/error-running-libtorch-example-program/53980/6">build libtorch with cmake</a></li>
+  <li><a href="http://lernapparat.de/pytorch-traceable-differentiable/">custom op</a></li>
+  <li><a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official c++ tutorial</a></li>
+  <li><a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">tensorOption</a></li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#c" class="page__taxonomy-item" rel="tag">c++</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#pytorch" class="page__taxonomy-item" rel="tag">pytorch</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#torchscript" class="page__taxonomy-item" rel="tag">torchscript</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#technique" class="page__taxonomy-item" rel="tag">technique</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-01-09T13:32:56+08:00">January 9, 2020</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Torchscript%3A+train+in+Python%2C+run+in+C%2B%2B%20http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Ftorchscript%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Ftorchscript%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Ftorchscript%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/technique/set-up-your-pacs-server-in-no-time/" class="pagination--pager" title="Orthanc: setup your PACS server in no time
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/technique/set-up-your-pacs-server-in-no-time/" rel="permalink">Orthanc: setup your PACS server in no time
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This article demonstrate how you can setup a PACS server using docker.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 ShihCheng Tu. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Torchscript: train in Python, run in C++"
 date:   2020-01-09 13:32:56 +0800
 tags: torchscript pytorch c++

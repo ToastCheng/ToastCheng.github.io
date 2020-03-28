@@ -1,0 +1,615 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Orthanc: setup your PACS server in no time - Toast</title>
+<meta name="description" content="This article demonstrate how you can setup a PACS server using docker. ">
+
+
+  <meta name="author" content="ShihCheng Tu">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Toast">
+<meta property="og:title" content="Orthanc: setup your PACS server in no time">
+<meta property="og:url" content="http://localhost:4000/technique/set-up-your-pacs-server-in-no-time/">
+
+
+  <meta property="og:description" content="This article demonstrate how you can setup a PACS server using docker. ">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-02-26T13:32:56+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/technique/set-up-your-pacs-server-in-no-time/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "ShihCheng Tu",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Toast Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Toast
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">ShihCheng Tu</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>I am an <strong>amazing</strong> person.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Taipei, Taiwan</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:mrtoastcheng@gmail.com">
+            <meta itemprop="email" content="mrtoastcheng@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Orthanc: setup your PACS server in no time">
+    <meta itemprop="description" content="This article demonstrate how you can setup a PACS server using docker.">
+    <meta itemprop="datePublished" content="2020-02-26T13:32:56+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Orthanc: setup your PACS server in no time
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This article demonstrate how you can setup a PACS server using docker.</p>
+
+<h3 id="using-docker">Using Docker</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="se">\</span>
+    <span class="nt">--rm</span> <span class="se">\</span>
+    <span class="nt">-p</span> 4242:4242 <span class="se">\</span>
+    <span class="nt">-p</span> 8042:8042 <span class="se">\</span>
+    <span class="nt">-v</span> <span class="o">{</span>PATH_IN_YOUR_DISK<span class="o">}</span>:/var/lib/orthanc/db/ <span class="se">\</span>
+    osimis/orthanc:20.2.0
+</code></pre></div></div>
+<ul>
+  <li><code class="highlighter-rouge">8042</code> is the default port that orthanc serve. Use <code class="highlighter-rouge">-p</code> to export it.</li>
+  <li><code class="highlighter-rouge">{PATH_IN_YOUR_DISK}</code> is an arbitrary path that in host disk, which <code class="highlighter-rouge">Orthanc</code> will save the dicom information inside it, make sure you create it before you run. <code class="highlighter-rouge">/var/lib/orthanc/db/</code> is the default path live inside orthanc image.</li>
+</ul>
+
+<h3 id="using-docker-compose">Using Docker Compose</h3>
+
+<p>It is pretty similar to the <code class="highlighter-rouge">docker run</code> command.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.7"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">orthanc</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">osimis/orthanc:20.2.0</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">4242:4242</span>
+      <span class="pi">-</span> <span class="s">8042:8042</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="pi">{</span><span class="nv">PATH_IN_YOUR_DISK</span><span class="pi">}</span><span class="s">:/var/lib/orthanc/db/</span>
+</code></pre></div></div>
+
+<p>Once you can successfully run the Orthanc docker image, you might wonder how to configurate it.</p>
+
+<h3 id="configuration">Configuration</h3>
+
+<h4 id="method-1--via-env">Method 1 – via ENV</h4>
+<p>You can configure Orthanc for docker by setting the environment variable just like other docker image such as <code class="highlighter-rouge">mysql</code>, it’s a normal way to setup your docker image.</p>
+
+<p>Below are the frequently used variable name:</p>
+<ul>
+  <li><code class="highlighter-rouge">AC_AUTHENTICATION_ENABLED</code></li>
+  <li><code class="highlighter-rouge">AC_REGISTERED_USERS</code></li>
+</ul>
+
+<h4 id="method-2--via-hardcode">Method 2 – via hardcode</h4>
+
+<p>Though setting ENV is pretty straight forward, but sometimes:</p>
+<ol>
+  <li>You have a lot to configure.</li>
+  <li>You just cannot find the correct environment variable you want to set.</li>
+  <li>The variables are multiline, like <code class="highlighter-rouge">AC_REGISTERED_USERS</code>, which is hard to set:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  AC_REGISTERED_USERS=
+  {
+  "foo": "baz"
+  }
+</code></pre></div>    </div>
+    <p>For these scenario, customize the configuration file is another option. It is the old way to setup hence it’s well documented, see <a href="https://book.orthanc-server.com/users/configuration.html#configuration">here</a> for documentations and <a href="https://bitbucket.org/sjodogne/orthanc/raw/Orthanc-1.5.8/Resources/Configuration.json">here</a> for an example.</p>
+  </li>
+</ol>
+
+<p>There are four existed configure files:</p>
+<ul>
+  <li><code class="highlighter-rouge">/etc/orthanc/http.json</code>
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"HttpTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpsVerifyPeers"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpsCACertificates"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"/etc/ssl/certs/ca-certificates.crt"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpProxy"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpPort"</span><span class="p">:</span><span class="w"> </span><span class="mi">8042</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpVerbose"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"KeepAlive"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"TcpNoDelay"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HttpRequestTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+  <li><code class="highlighter-rouge">/etc/orthanc/remote-access.json</code>
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"RemoteAccessAllowed"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AuthenticationEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"RegisteredUsers"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+  <li><code class="highlighter-rouge">/etc/orthanc/storage.json</code>
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"StorageDirectory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/orthanc/db"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MaximumStorageSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MaximumPatientCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"StoreDicom"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+  <li><code class="highlighter-rouge">/etc/orthanc/plugins.json</code>
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"/usr/share/orthanc/plugins"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+    <p>Note that you <strong>cannot</strong> set the same key in two (or more) different config files. So if you add <code class="highlighter-rouge">RegisteredUsers</code> in your customized config <code class="highlighter-rouge">orthanc.json</code>, it will conflict with one in <code class="highlighter-rouge">remote-access.json</code>. Set it in <code class="highlighter-rouge">remote-access.json</code> instead.</p>
+  </li>
+</ul>
+
+<p>You can edit those files or create new one inside <code class="highlighter-rouge">/etc/orthanc</code>. There are some ways to do that:</p>
+
+<h4 id="add-in-dockerfile">Add in Dockerfile</h4>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> osimis/orthanc:20.2.0</span>
+<span class="k">COPY</span><span class="s"> {YOUR_CONFIG_FILE_NAME}.json /etc/orthanc/</span>
+</code></pre></div></div>
+<p>and</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-f</span> <span class="o">{</span>DOCKERFILE<span class="o">}</span> <span class="nt">-t</span> <span class="nb">local</span>/orthanc
+docker run <span class="se">\</span>
+    <span class="nt">--rm</span> <span class="se">\</span>
+    <span class="nt">-p</span> 4242:4242 <span class="se">\</span>
+    <span class="nt">-p</span> 8042:8042 <span class="se">\</span>
+    <span class="nt">-v</span> <span class="o">{</span>PATH_IN_YOUR_DISK<span class="o">}</span>:/var/lib/orthanc/db/ <span class="se">\</span>
+    <span class="nb">local</span>/orthanc
+</code></pre></div></div>
+<p>But it might be tedious to build it, so you can consider mounting the complete configuration:</p>
+
+<h4 id="mount-when-docker-run">Mount when <code class="highlighter-rouge">docker run</code></h4>
+
+<p>Make sure you have all the necessary settings in <code class="highlighter-rouge">{CUSTOMIZE_CONFIG}/</code>, which includes:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">/etc/orthanc/http.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/remote-access.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/storage.json</code></li>
+  <li><code class="highlighter-rouge">/etc/orthanc/plugins.json</code></li>
+</ul>
+
+<p>and</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="se">\</span>
+    <span class="nt">--rm</span> <span class="se">\</span>
+    <span class="nt">-p</span> 4242:4242 <span class="se">\</span>
+    <span class="nt">-p</span> 8042:8042 <span class="se">\</span>
+    <span class="nt">-v</span> <span class="o">{</span>PATH_IN_YOUR_DISK<span class="o">}</span>:/var/lib/orthanc/db/ <span class="se">\</span>
+    <span class="nt">-v</span> <span class="o">{</span>CUSTOMIZE_CONFIG<span class="o">}</span>:/etc/orthanc <span class="se">\</span>
+    osimis/orthanc:20.2.0
+</code></pre></div></div>
+
+<p>This way you will not have to build the docker image. And you are good to go!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#orthanc" class="page__taxonomy-item" rel="tag">orthanc</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#pacs" class="page__taxonomy-item" rel="tag">pacs</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#technique" class="page__taxonomy-item" rel="tag">technique</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-02-26T13:32:56+08:00">February 26, 2020</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Orthanc%3A+setup+your+PACS+server+in+no+time%20http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Fset-up-your-pacs-server-in-no-time%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Fset-up-your-pacs-server-in-no-time%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnique%2Fset-up-your-pacs-server-in-no-time%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/technique/torchscript/" class="pagination--pager" title="Torchscript: train in Python, run in C++
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/technique/torchscript/" rel="permalink">Torchscript: train in Python, run in C++
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This article is mainly about serialize a pytorch model, and load it into C++.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 ShihCheng Tu. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
