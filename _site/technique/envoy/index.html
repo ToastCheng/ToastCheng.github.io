@@ -1,0 +1,773 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Integrate envoy &amp; grpc-web in k8s - Toast</title>
+<meta name="description" content="Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC. ">
+
+
+  <meta name="author" content="ShihCheng Tu">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Toast">
+<meta property="og:title" content="Integrate envoy &amp; grpc-web in k8s">
+<meta property="og:url" content="/technique/envoy/">
+
+
+  <meta property="og:description" content="Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC. ">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-12-10T13:32:56+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="/technique/envoy/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "ShihCheng Tu",
+      "url": "/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Toast Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Toast
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about">About</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">ShihCheng Tu</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>I am an <strong>amazing</strong> person.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Taipei, Taiwan</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:mrtoastcheng@gmail.com">
+            <meta itemprop="email" content="mrtoastcheng@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Integrate envoy &amp; grpc-web in k8s">
+    <meta itemprop="description" content="Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC.">
+    <meta itemprop="datePublished" content="2019-12-10T13:32:56+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Integrate envoy &amp; grpc-web in k8s
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC.</p>
+
+<p>in this example, I want to extend the helloworld example from the official grpc-web: When you have multiple service, how can one manage the traffic by envoy.</p>
+
+<p>I will use a cluster which managed by kubernetes, to integrate envoy with grpc-web, we have several things to do</p>
+
+<ol>
+  <li>let’s make two service here
+    <ul>
+      <li>service1.proto</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
+
+<span class="kn">package</span> <span class="nn">service1</span><span class="p">;</span>
+
+<span class="kd">service</span> <span class="n">ServiceOneServer</span> <span class="p">{</span>
+  <span class="k">rpc</span> <span class="n">SayHello</span><span class="p">(</span><span class="n">HelloRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">HelloReply</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">HelloRequest</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="na">name</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">HelloReply</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="kd">message</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>service2.proto</li>
+</ul>
+
+<div class="language-proto highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
+
+<span class="kn">package</span> <span class="nn">service2</span><span class="p">;</span>
+
+<span class="kd">service</span> <span class="n">ServiceTwoServer</span> <span class="p">{</span>
+  <span class="k">rpc</span> <span class="n">SayHello</span><span class="p">(</span><span class="n">HelloRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">HelloReply</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">HelloRequest</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="na">name</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">HelloReply</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="kd">message</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ol>
+  <li>generate the javascript code using <code class="highlighter-rouge">protoc</code> and <code class="highlighter-rouge">protoc-gen-grpc-web</code></li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>protoc <span class="nt">-I</span><span class="o">=</span><span class="nb">.</span> service1.proto <span class="se">\</span>
+  <span class="nt">--js_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs:. <span class="se">\</span>
+  <span class="nt">--grpc-web_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,mode<span class="o">=</span>grpcwebtext:.
+protoc <span class="nt">-I</span><span class="o">=</span><span class="nb">.</span> service2.proto <span class="se">\</span>
+  <span class="nt">--js_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs:. <span class="se">\</span>
+  <span class="nt">--grpc-web_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,mode<span class="o">=</span>grpcwebtext:.
+</code></pre></div></div>
+<p>inside the generated <code class="highlighter-rouge">service1_grpc_web_pb.js</code> you cand find something likes:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">methodDescriptor_Service1_SayHello</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">grpc</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">MethodDescriptor</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">/service1.ServiceOneServer/SayHello</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">grpc</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">MethodType</span><span class="p">.</span><span class="nx">UNARY</span><span class="p">,</span>
+  <span class="p">...</span>
+</code></pre></div></div>
+<p>note that the <code class="highlighter-rouge">'/service1.ServiceOneServer/SayHello'</code> is the route that generated by grpc-web and we will observe the pattern <code class="highlighter-rouge">/{package}.{service}/{api}</code> and use it to configure our envoy proxy.</p>
+
+<ol>
+  <li>
+    <p>I will skip the implementations of the service1 and service2, you can do any languages that support gRPC</p>
+  </li>
+  <li>
+    <p>now is time to write an envoy.yaml file to configure the behavior of envoy</p>
+  </li>
+</ol>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># for envoy admin</span>
+<span class="na">admin</span><span class="pi">:</span>
+  <span class="na">access_log_path</span><span class="pi">:</span> <span class="s">/tmp/admin_access.log</span>
+  <span class="na">address</span><span class="pi">:</span>
+    <span class="na">socket_address</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">address</span><span class="pi">:</span> <span class="nv">0.0.0.0</span><span class="pi">,</span> <span class="nv">port_value</span><span class="pi">:</span> <span class="nv">9901</span> <span class="pi">}</span>
+
+<span class="c1"># for the main proxy</span>
+<span class="na">static_resources</span><span class="pi">:</span>
+  <span class="na">listeners</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">listener_0</span>
+    <span class="na">address</span><span class="pi">:</span>
+      <span class="c1"># the port_value here specify the port which envoy will listen at</span>
+      <span class="na">socket_address</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">address</span><span class="pi">:</span> <span class="nv">0.0.0.0</span><span class="pi">,</span> <span class="nv">port_value</span><span class="pi">:</span> <span class="nv">8080</span> <span class="pi">}</span>
+    <span class="na">filter_chains</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.http_connection_manager</span>
+        <span class="na">config</span><span class="pi">:</span>
+          <span class="na">codec_type</span><span class="pi">:</span> <span class="s">auto</span>
+          <span class="na">stat_prefix</span><span class="pi">:</span> <span class="s">ingress_http</span>
+          <span class="na">route_config</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">local_route</span>
+            <span class="na">virtual_hosts</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">local_service</span>
+              <span class="na">domains</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">*"</span><span class="pi">]</span>
+              <span class="c1"># add all your service here</span>
+              <span class="c1"># the prefix in the routes' match is exactly the pattern in the previous generated code</span>
+              <span class="na">routes</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">prefix</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/service1.ServiceOne"</span> <span class="pi">}</span>
+                <span class="na">route</span><span class="pi">:</span>
+                  <span class="c1"># this will map to name tag in line 50</span>
+                  <span class="na">cluster</span><span class="pi">:</span> <span class="s">service1</span> 
+                  <span class="na">max_grpc_timeout</span><span class="pi">:</span> <span class="s">10s</span>
+              <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">prefix</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/service2.ServiceTwo"</span> <span class="pi">}</span>
+                <span class="na">route</span><span class="pi">:</span>
+                  <span class="na">cluster</span><span class="pi">:</span> <span class="s">service2</span>
+                  <span class="na">max_grpc_timeout</span><span class="pi">:</span> <span class="s">10s</span>
+              <span class="na">cors</span><span class="pi">:</span>
+                <span class="na">allow_origin</span><span class="pi">:</span>
+                <span class="pi">-</span> <span class="s2">"</span><span class="s">*"</span>
+                <span class="na">allow_methods</span><span class="pi">:</span> <span class="s">GET, PUT, DELETE, POST, OPTIONS</span>
+                <span class="na">allow_headers</span><span class="pi">:</span> <span class="s">keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout</span>
+                <span class="na">max_age</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1728000"</span>
+                <span class="na">expose_headers</span><span class="pi">:</span> <span class="s">custom-header-1,grpc-status,grpc-message</span>
+          <span class="na">http_filters</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.grpc_web</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.cors</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.router</span>
+  <span class="na">clusters</span><span class="pi">:</span>
+    <span class="c1"># the name here will be matched by the cluster tag in line 31</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service1</span> 
+    <span class="na">connect_timeout</span><span class="pi">:</span> <span class="s">0.25s</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">strict_dns</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="c1"># the address and port_value here specify where the traffic should be pass to</span>
+    <span class="c1"># since it is inside k8s, the address can simply be the port name thanks to kubernetes dns</span>
+    <span class="na">hosts</span><span class="pi">:</span> <span class="pi">[{</span> <span class="nv">socket_address</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">address</span><span class="pi">:</span> <span class="nv">service1</span><span class="pi">,</span> <span class="nv">port_value</span><span class="pi">:</span> <span class="nv">10001</span> <span class="pi">}}]</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service2</span>
+    <span class="na">connect_timeout</span><span class="pi">:</span> <span class="s">0.25s</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">strict_dns</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="na">hosts</span><span class="pi">:</span> <span class="pi">[{</span> <span class="nv">socket_address</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">address</span><span class="pi">:</span> <span class="nv">service2</span><span class="pi">,</span> <span class="nv">port_value</span><span class="pi">:</span> <span class="nv">10002</span> <span class="pi">}}]</span>
+
+</code></pre></div></div>
+
+<ol>
+  <li>for more explicit, the service1’s yaml loos like this, note that the ports.name in containers is exactly the name used in envoy’s config:
+<code class="highlighter-rouge">hosts: [{ socket_address: { address: service1, port_value: 10001 }}]</code>
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+ app: service1
+  name: service1
+spec:
+  ports:
+    <ul>
+      <li>port: 10001
+targetPort: 10001
+  selector:
+ app: service1
+  type: ClusterIP
+—
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+spec:
+  strategy:
+ type: RollingUpdate
+ rollingUpdate:
+maxSurge: 1
+maxUnavailable: 1
+  replicas: 1
+  selector:
+ matchLabels:
+app: service1
+  template:
+ metadata:
+labels:
+  app: service1
+ spec:
+containers:
+        <ul>
+          <li>name: service1
+image: somewhere/service1
+imagePullPolicy: Never
+ports:
+            <ul>
+              <li>name: service1
+containerPort: 10001
+protocol: TCP</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+
+3. add a dockerfile, the dockerfile itself is quite simple, all you have to do is to copy the envoy.yaml you just wrote to the envoy image
+```dockerfile
+FROM envoyproxy/envoy:latest
+COPY ./configs/envoy.yaml /etc/envoy/envoy.yaml
+CMD /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+</code></pre></div></div>
+<ol>
+  <li>then deploy the envoy service into your cluster
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy
+spec:
+  type: NodePort
+  selector:
+ app: envoy
+  ports:
+    <ul>
+      <li>name: envoy
+ protocol: TCP
+ port: 80
+ targetPort: 8080
+—
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+spec:
+  replicas: 1
+  selector:
+ matchLabels:
+   app: envoy
+  template:
+ metadata:
+   labels:
+ app: envoy
+ spec:
+   containers:</li>
+    </ul>
+    <ul>
+      <li>name: envoy
+image: local/envoy
+imagePullPolicy: Never
+ports:
+        <ul>
+          <li>name: envoy
+containerPort: 8080
+```</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>apply all service!</li>
+</ol>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#envoy" class="page__taxonomy-item" rel="tag">envoy</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#grpc-web" class="page__taxonomy-item" rel="tag">grpc-web</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#grpc" class="page__taxonomy-item" rel="tag">grpc</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#kubernetes" class="page__taxonomy-item" rel="tag">kubernetes</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#technique" class="page__taxonomy-item" rel="tag">technique</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-12-10T13:32:56+08:00">December 10, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Integrate+envoy+%26+grpc-web+in+k8s%20%2Ftechnique%2Fenvoy%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=%2Ftechnique%2Fenvoy%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=%2Ftechnique%2Fenvoy%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/technique/torchscript/" class="pagination--pager" title="Torchscript: train in Python, run in C++
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/technique/set-up-your-pacs-server-in-no-time/" rel="permalink">Orthanc: setup your PACS server in no time
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This article demonstrate how you can setup a PACS server using docker.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/technique/torchscript/" rel="permalink">Torchscript: train in Python, run in C++
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This article is mainly about serialize a pytorch model, and load it into C++.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 ShihCheng Tu. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

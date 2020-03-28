@@ -1,4 +1,10 @@
 var store = [{
+        "title": "Integrate envoy & grpc-web in k8s",
+        "excerpt":"Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC. in this example, I want to extend the helloworld example from the official grpc-web: When you have multiple service, how can one manage the traffic by envoy. I will use a cluster...","categories": ["technique"],
+        "tags": ["envoy","kubernetes","grpc","grpc-web"],
+        "url": "/technique/envoy/",
+        "teaser": null
+      },{
         "title": "Torchscript: train in Python, run in C++",
         "excerpt":"This article is mainly about serialize a pytorch model, and load it into C++. First of all, traced your model “Trace” is a mechanism which pytorch used to record the behavior of neural nets. To perform tracing, first you have to initialize your model, say that you have trained your...","categories": ["technique"],
         "tags": ["torchscript","pytorch","c++"],

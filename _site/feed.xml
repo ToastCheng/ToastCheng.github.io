@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2020-03-28T13:22:14+08:00</updated><id>/feed.xml</id><title type="html">Toast</title><subtitle>An amazing website.</subtitle><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><entry><title type="html">Orthanc: setup your PACS server in no time</title><link href="/technique/set-up-your-pacs-server-in-no-time/" rel="alternate" type="text/html" title="Orthanc: setup your PACS server in no time" /><published>2020-02-25T13:32:56+08:00</published><updated>2020-02-25T13:32:56+08:00</updated><id>/technique/set-up-your-pacs-server-in-no-time</id><content type="html" xml:base="/technique/set-up-your-pacs-server-in-no-time/">&lt;p&gt;This article demonstrate how you can setup a PACS server using docker.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2020-03-28T13:31:31+08:00</updated><id>/feed.xml</id><title type="html">Toast</title><subtitle>An amazing website.</subtitle><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><entry><title type="html">Orthanc: setup your PACS server in no time</title><link href="/technique/set-up-your-pacs-server-in-no-time/" rel="alternate" type="text/html" title="Orthanc: setup your PACS server in no time" /><published>2020-02-25T13:32:56+08:00</published><updated>2020-02-25T13:32:56+08:00</updated><id>/technique/set-up-your-pacs-server-in-no-time</id><content type="html" xml:base="/technique/set-up-your-pacs-server-in-no-time/">&lt;p&gt;This article demonstrate how you can setup a PACS server using docker.&lt;/p&gt;
 
 &lt;h3 id=&quot;using-docker&quot;&gt;Using Docker&lt;/h3&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
@@ -361,4 +361,264 @@ cmake &lt;span class=&quot;nt&quot;&gt;--build&lt;/span&gt; &lt;span class=&quot
   &lt;li&gt;&lt;a href=&quot;http://lernapparat.de/pytorch-traceable-differentiable/&quot;&gt;custom op&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://pytorch.org/tutorials/advanced/cpp_export.html&quot;&gt;official c++ tutorial&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor&quot;&gt;tensorOption&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><category term="torchscript" /><category term="pytorch" /><category term="c++" /><summary type="html">This article is mainly about serialize a pytorch model, and load it into C++.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><category term="torchscript" /><category term="pytorch" /><category term="c++" /><summary type="html">This article is mainly about serialize a pytorch model, and load it into C++.</summary></entry><entry><title type="html">Integrate envoy &amp;amp; grpc-web in k8s</title><link href="/technique/envoy/" rel="alternate" type="text/html" title="Integrate envoy &amp; grpc-web in k8s" /><published>2019-12-10T13:32:56+08:00</published><updated>2019-12-10T13:32:56+08:00</updated><id>/technique/envoy</id><content type="html" xml:base="/technique/envoy/">&lt;p&gt;Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC.&lt;/p&gt;
+
+&lt;p&gt;in this example, I want to extend the helloworld example from the official grpc-web: When you have multiple service, how can one manage the traffic by envoy.&lt;/p&gt;
+
+&lt;p&gt;I will use a cluster which managed by kubernetes, to integrate envoy with grpc-web, we have several things to do&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;let’s make two service here
+    &lt;ul&gt;
+      &lt;li&gt;service1.proto&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-proto highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;syntax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;proto3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;service1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;service&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ServiceOneServer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;rpc&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SayHello&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HelloRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;returns&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HelloReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;HelloRequest&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;HelloReply&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;service2.proto&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-proto highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;syntax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;proto3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;service2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;service&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ServiceTwoServer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;rpc&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SayHello&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HelloRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;returns&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HelloReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;HelloRequest&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;HelloReply&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;generate the javascript code using &lt;code class=&quot;highlighter-rouge&quot;&gt;protoc&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;protoc-gen-grpc-web&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;protoc &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; service1.proto &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--js_out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;import_style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;commonjs:. &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--grpc-web_out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;import_style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;commonjs,mode&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;grpcwebtext:.
+protoc &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; service2.proto &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--js_out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;import_style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;commonjs:. &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--grpc-web_out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;import_style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;commonjs,mode&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;grpcwebtext:.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;inside the generated &lt;code class=&quot;highlighter-rouge&quot;&gt;service1_grpc_web_pb.js&lt;/code&gt; you cand find something likes:&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;methodDescriptor_Service1_SayHello&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;grpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MethodDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/service1.ServiceOneServer/SayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;grpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MethodType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UNARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;note that the &lt;code class=&quot;highlighter-rouge&quot;&gt;'/service1.ServiceOneServer/SayHello'&lt;/code&gt; is the route that generated by grpc-web and we will observe the pattern &lt;code class=&quot;highlighter-rouge&quot;&gt;/{package}.{service}/{api}&lt;/code&gt; and use it to configure our envoy proxy.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;I will skip the implementations of the service1 and service2, you can do any languages that support gRPC&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;now is time to write an envoy.yaml file to configure the behavior of envoy&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# for envoy admin&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;admin&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;access_log_path&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/tmp/admin_access.log&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;socket_address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;0.0.0.0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port_value&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;9901&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# for the main proxy&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;static_resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;listeners&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;listener_0&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;# the port_value here specify the port which envoy will listen at&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;socket_address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;0.0.0.0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port_value&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;8080&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;filter_chains&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;filters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;envoy.http_connection_manager&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;codec_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;auto&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;stat_prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ingress_http&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;route_config&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;local_route&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;virtual_hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;local_service&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;domains&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+              &lt;span class=&quot;c1&quot;&gt;# add all your service here&lt;/span&gt;
+              &lt;span class=&quot;c1&quot;&gt;# the prefix in the routes' match is exactly the pattern in the previous generated code&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;routes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/service1.ServiceOne&quot;&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                  &lt;span class=&quot;c1&quot;&gt;# this will map to name tag in line 50&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;cluster&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;service1&lt;/span&gt; 
+                  &lt;span class=&quot;na&quot;&gt;max_grpc_timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+              &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/service2.ServiceTwo&quot;&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;cluster&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;service2&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;max_grpc_timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;cors&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;allow_origin&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*&quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;allow_methods&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;GET, PUT, DELETE, POST, OPTIONS&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;allow_headers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;max_age&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1728000&quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;expose_headers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;custom-header-1,grpc-status,grpc-message&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;http_filters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;envoy.grpc_web&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;envoy.cors&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;envoy.router&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# the name here will be matched by the cluster tag in line 31&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;service1&lt;/span&gt; 
+    &lt;span class=&quot;na&quot;&gt;connect_timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;0.25s&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;strict_dns&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;http2_protocol_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{}&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;lb_policy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;round_robin&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# the address and port_value here specify where the traffic should be pass to&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# since it is inside k8s, the address can simply be the port name thanks to kubernetes dns&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;socket_address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;service1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port_value&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;10001&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}}]&lt;/span&gt;
+
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;service2&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;connect_timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;0.25s&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;strict_dns&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;http2_protocol_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{}&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;lb_policy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;round_robin&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;socket_address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;service2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port_value&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;10002&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}}]&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;for more explicit, the service1’s yaml loos like this, note that the ports.name in containers is exactly the name used in envoy’s config:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;hosts: [{ socket_address: { address: service1, port_value: 10001 }}]&lt;/code&gt;
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+ app: service1
+  name: service1
+spec:
+  ports:
+    &lt;ul&gt;
+      &lt;li&gt;port: 10001
+targetPort: 10001
+  selector:
+ app: service1
+  type: ClusterIP
+—
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+spec:
+  strategy:
+ type: RollingUpdate
+ rollingUpdate:
+maxSurge: 1
+maxUnavailable: 1
+  replicas: 1
+  selector:
+ matchLabels:
+app: service1
+  template:
+ metadata:
+labels:
+  app: service1
+ spec:
+containers:
+        &lt;ul&gt;
+          &lt;li&gt;name: service1
+image: somewhere/service1
+imagePullPolicy: Never
+ports:
+            &lt;ul&gt;
+              &lt;li&gt;name: service1
+containerPort: 10001
+protocol: TCP&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+
+
+3. add a dockerfile, the dockerfile itself is quite simple, all you have to do is to copy the envoy.yaml you just wrote to the envoy image
+```dockerfile
+FROM envoyproxy/envoy:latest
+COPY ./configs/envoy.yaml /etc/envoy/envoy.yaml
+CMD /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ol&gt;
+  &lt;li&gt;then deploy the envoy service into your cluster
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy
+spec:
+  type: NodePort
+  selector:
+ app: envoy
+  ports:
+    &lt;ul&gt;
+      &lt;li&gt;name: envoy
+ protocol: TCP
+ port: 80
+ targetPort: 8080
+—
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+spec:
+  replicas: 1
+  selector:
+ matchLabels:
+   app: envoy
+  template:
+ metadata:
+   labels:
+ app: envoy
+ spec:
+   containers:&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;name: envoy
+image: local/envoy
+imagePullPolicy: Never
+ports:
+        &lt;ul&gt;
+          &lt;li&gt;name: envoy
+containerPort: 8080
+```&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;apply all service!&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>ShihCheng Tu</name><email>mrtoastcheng@gmail.com</email></author><category term="envoy" /><category term="kubernetes" /><category term="grpc" /><category term="grpc-web" /><summary type="html">Envoy is a proxy for modern web app. More importantly, it has a first class support for gRPC.</summary></entry></feed>
