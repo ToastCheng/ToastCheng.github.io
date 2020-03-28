@@ -1,6 +1,6 @@
 ---
 title:  "Orthanc: setup your PACS server in no time"
-date:   2020-02-26 13:32:56 +0800
+date:   2020-02-25 13:32:56 +0800
 tags: orthanc pacs
 categories: technique
 ---

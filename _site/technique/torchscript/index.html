@@ -299,42 +299,42 @@
 <p>“Trace” is a mechanism which pytorch used to record the behavior of neural nets. 
 To perform tracing, first you have to initialize your model, say that you have trained your model until it reach production level.</p>
 
-<pre><code class="language-python=">import torch
-from your.model.path import Model
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">your.model.path</span> <span class="kn">import</span> <span class="n">Model</span>
 
-# assume that Model() is simply a network class which inherit nn.Module.
-model = Model()
+<span class="c1"># assume that Model() is simply a network class which inherit nn.Module.
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
 
-# of course you have to load the weight of your model.
-weight = torch.load("{your-weight-path}", map_location=torch.device("cpu"))
-model.load_state_dict(weight)
-</code></pre>
+<span class="c1"># of course you have to load the weight of your model.
+</span><span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">"{your-weight-path}"</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+</code></pre></div></div>
 
 <p>Then you have to make an <code class="highlighter-rouge">example</code>, i.e., a tensor that match the size of <code class="highlighter-rouge">model</code>’s input size. Note that you will have to set <code class="highlighter-rouge">model</code> to <code class="highlighter-rouge">eval()</code> for disabling training features since we are doing this for inference.</p>
 
-<pre><code class="language-python=">example = torch.rand(1, 3, 512, 512)
-model.eval()
-</code></pre>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="nb">eval</span><span class="p">()</span>
+</code></pre></div></div>
 
 <p>After configuration, just simply called <code class="highlighter-rouge">torch.jit.trace</code> and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.</p>
 
-<pre><code class="language-python=">traced = torch.jit.trace(model, example, check_trace=True)
-traced.save("traced_model.pt")
-</code></pre>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">traced</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">traced</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">"traced_model.pt"</span><span class="p">)</span>
+</code></pre></div></div>
 
 <p>You can make a simple check to see if the output is the same as the original model.</p>
 
-<pre><code class="language-python=">traced_model = torch.jit.load("traced_model.pt")
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">traced_model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">"traced_model.pt"</span><span class="p">)</span>
 
-model(example)
-# output: 
+<span class="n">model</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+<span class="c1"># output: 
 # tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
 #        grad_fn=&lt;AddmmBackward&gt;)
-traced_model(example)
-# output: 
+</span><span class="n">traced_model</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+<span class="c1"># output: 
 # tensor([[-10.5246, -15.4433, -15.8299, -14.9295, -13.4168, -10.2231]],
 #        grad_fn=&lt;AddmmBackward&gt;)
-</code></pre>
+</span></code></pre></div></div>
 
 <p><em>note 1</em>
 The traced torchscript file does not seems to be platform-independent, if you trace it on Mac, and load it in Windows, unpredictable errors happens when loading model.</p>
@@ -343,19 +343,19 @@ The traced torchscript file does not seems to be platform-independent, if you tr
 As offical document stated, if your model contains control flows(<code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">else</code>), or any operations that depends on the value of <code class="highlighter-rouge">example</code>, i.e., <code class="highlighter-rouge">example</code> cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add <code class="highlighter-rouge">@torch.jit.script</code> in every function which contains control flow.</p>
 
 <p>e.g.</p>
-<pre><code class="language-python=">class Model(nn.Module):
-    ...
-    def forward(self, x):
-        ...
-        x = self._some_operation(x)
-        return x
-    @torch.jit.script
-    def _some_operation(self, x):
-        if x.sum() == 0:
-            ...
-        else:
-            ...
-</code></pre>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_some_operation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="o">@</span><span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">script</span>
+    <span class="k">def</span> <span class="nf">_some_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="o">...</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="o">...</span>
+</code></pre></div></div>
 
 <p><em>note 3</em>
 If your model contains custom <code class="highlighter-rouge">autograd.Function</code>, the operation cannot be traced (yet). One solution is to write a C++ operation and build pytorch by yourself like <a href="http://lernapparat.de/pytorch-traceable-differentiable/">this</a>, or you can simply try to use existed operations to build your custom operation rather than inherit <code class="highlighter-rouge">autograd.Function</code>.</p>
@@ -380,46 +380,46 @@ If your model contains custom <code class="highlighter-rouge">autograd.Function<
   <li>Preparing main.cpp, here I will extend the <a href="https://pytorch.org/tutorials/advanced/cpp_export.html">official example code</a>. The first part below is how c++ load a traced model, simply call <code class="highlighter-rouge">torch::jit::load()</code>.</li>
 </ol>
 
-<pre><code class="language-cpp=">#include &lt;torch/script.h&gt;
-
-#include &lt;iostream&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;torch/script.h&gt;
+</span>
+<span class="cp">#include &lt;iostream&gt;
 #include &lt;string.h&gt;
-
-int main() {
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   
-  std::string model_path = "traced_model.pt"
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">model_path</span> <span class="o">=</span> <span class="s">"traced_model.pt"</span>
 
-  torch::jit::script::Module module;
-  try {
-    // Deserialize the ScriptModule from a file using torch::jit::load().
-    module = torch::jit::load(model_path);
-  }
-  catch (const c10::Error&amp; e) {
-    std::cerr &lt;&lt; "error loading the model\n";
-    return -1;
-  }
+  <span class="n">torch</span><span class="o">::</span><span class="n">jit</span><span class="o">::</span><span class="n">script</span><span class="o">::</span><span class="n">Module</span> <span class="n">module</span><span class="p">;</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="c1">// Deserialize the ScriptModule from a file using torch::jit::load().</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">torch</span><span class="o">::</span><span class="n">jit</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">c10</span><span class="o">::</span><span class="n">Error</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">"error loading the model</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
 
-  ...
-</code></pre>
+  <span class="p">...</span>
+</code></pre></div></div>
 <p>Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) <code class="highlighter-rouge">int* data</code>, which is a way that C++ store image data. You can simply use <code class="highlighter-rouge">torch::from_blob()</code> to read the data into tensor, the sizes of it will be given in the second argument. The <code class="highlighter-rouge">options</code> is the way that <code class="highlighter-rouge">torch</code> used (as the third argument) to decide the type that will be read. You can find more in <a href="https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor">here</a>.</p>
 
-<pre><code class="language-cpp=">  ... (still in main())
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">...</span> <span class="p">(</span><span class="n">still</span> <span class="n">in</span> <span class="n">main</span><span class="p">())</span>
   
-  int height = 512;
-  int width = 512;
-  int* data = get_image_data(); // some api that you get your data.
+  <span class="kt">int</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">512</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">512</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_image_data</span><span class="p">();</span> <span class="c1">// some api that you get your data.</span>
   
-  at::Tensor t;
-  auto options = c10::TensorOptions().dtype(torch::kShort);
-  t = torch::from_blob(data, { 
-    /*batch=*/1, 
-    /*channel=*/1, 
-    /*width=*/width, 
-    /*height=*/height 
-  }, options);
+  <span class="n">at</span><span class="o">::</span><span class="n">Tensor</span> <span class="n">t</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">options</span> <span class="o">=</span> <span class="n">c10</span><span class="o">::</span><span class="n">TensorOptions</span><span class="p">().</span><span class="n">dtype</span><span class="p">(</span><span class="n">torch</span><span class="o">::</span><span class="n">kShort</span><span class="p">);</span>
+  <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">::</span><span class="n">from_blob</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">{</span> 
+    <span class="cm">/*batch=*/</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="cm">/*channel=*/</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="cm">/*width=*/</span><span class="n">width</span><span class="p">,</span> 
+    <span class="cm">/*height=*/</span><span class="n">height</span> 
+  <span class="p">},</span> <span class="n">options</span><span class="p">);</span>
   
-  ...
-</code></pre>
+  <span class="p">...</span>
+</code></pre></div></div>
 
 <p>Lastly, you will have to initialize a vector of <code class="highlighter-rouge">torch::jit::IValue</code> as an input for a torchscript model. simply <code class="highlighter-rouge">push_back</code> a batch of tensor inside and you can run with <code class="highlighter-rouge">module.forward()</code>. You can get the result using <code class="highlighter-rouge">toTensor()</code>. There are some useful member functions of <code class="highlighter-rouge">Tensor</code>:</p>
 <ul>
@@ -427,21 +427,21 @@ int main() {
   <li>cast the value into primitive type by <code class="highlighter-rouge">item&lt;type&gt;()</code></li>
 </ul>
 
-<pre><code class="language-cpp=">  ... (still in main())
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">...</span> <span class="p">(</span><span class="n">still</span> <span class="n">in</span> <span class="n">main</span><span class="p">())</span>
   
-  std::vector&lt;torch::jit::IValue&gt; input;
-  input.push_back(data)
-  output = module.forward(input).toTensor();
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">torch</span><span class="o">::</span><span class="n">jit</span><span class="o">::</span><span class="n">IValue</span><span class="o">&gt;</span> <span class="n">input</span><span class="p">;</span>
+  <span class="n">input</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="n">module</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input</span><span class="p">).</span><span class="n">toTensor</span><span class="p">();</span>
   
-  // say that we want to know the output of the first input(0), second dimension(1)
-  std::cout &lt;&lt; "result: " &lt;&lt; output[0][1].item&lt;float&gt;() &lt;&lt; std::endl;
+  <span class="c1">// say that we want to know the output of the first input(0), second dimension(1)</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"result: "</span> <span class="o">&lt;&lt;</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="n">item</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
   
-  // observe the shape
-  std::cout &lt;&lt; output.sizes() &lt;&lt; std::endl;
+  <span class="c1">// observe the shape</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">output</span><span class="p">.</span><span class="n">sizes</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
   
-  return 0;
-}
-</code></pre>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="err">}</span>
+</code></pre></div></div>
 
 <h3 id="finally-build-the-app"><strong>Finally, build the app</strong></h3>
 
@@ -463,52 +463,52 @@ int main() {
   </li>
 </ol>
 
-<pre><code class="language-cmake=">cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(test-torch)
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cmake_minimum_required</span><span class="p">(</span>VERSION 3.0 FATAL_ERROR<span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span>test-torch<span class="p">)</span>
 
-# if not set here, you should set it in argument with -D flag. e.g. -DCMAKE_PREFIX_PATH={libtorch path}
-set(CMAKE_PREFIX_PATH "{libtorch path}")
-# if not set, annoying warnings will pop up
-cmake_policy(SET CMP0054 NEW)
+<span class="c1"># if not set here, you should set it in argument with -D flag. e.g. -DCMAKE_PREFIX_PATH={libtorch path}</span>
+<span class="nb">set</span><span class="p">(</span>CMAKE_PREFIX_PATH <span class="s2">"{libtorch path}"</span><span class="p">)</span>
+<span class="c1"># if not set, annoying warnings will pop up</span>
+<span class="nb">cmake_policy</span><span class="p">(</span>SET CMP0054 NEW<span class="p">)</span>
 
-find_package(Torch REQUIRED)
+<span class="nb">find_package</span><span class="p">(</span>Torch REQUIRED<span class="p">)</span>
 
-add_executable(test-torch main.cpp)
-target_link_libraries(test-torch "${TORCH_LIBRARIES}")
-set_property(TARGET test-torch PROPERTY CXX_STANDARD 14)
+<span class="nb">add_executable</span><span class="p">(</span>test-torch main.cpp<span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span>test-torch <span class="s2">"</span><span class="si">${</span><span class="nv">TORCH_LIBRARIES</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">set_property</span><span class="p">(</span>TARGET test-torch PROPERTY CXX_STANDARD 14<span class="p">)</span>
 
-if (MSVC)
-  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-  add_custom_command(TARGET test-torch
+<span class="nb">if</span> <span class="p">(</span>MSVC<span class="p">)</span>
+  <span class="nb">file</span><span class="p">(</span>GLOB TORCH_DLLS <span class="s2">"</span><span class="si">${</span><span class="nv">TORCH_INSTALL_PREFIX</span><span class="si">}</span><span class="s2">/lib/*.dll"</span><span class="p">)</span>
+  <span class="nb">add_custom_command</span><span class="p">(</span>TARGET test-torch
                      POST_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                     ${TORCH_DLLS}
-                     $&lt;TARGET_FILE_DIR:test-torch&gt;)
-endif (MSVC)
-</code></pre>
+                     COMMAND <span class="si">${</span><span class="nv">CMAKE_COMMAND</span><span class="si">}</span> -E copy_if_different
+                     <span class="si">${</span><span class="nv">TORCH_DLLS</span><span class="si">}</span>
+                     $&lt;TARGET_FILE_DIR:test-torch&gt;<span class="p">)</span>
+<span class="nb">endif</span> <span class="p">(</span>MSVC<span class="p">)</span>
+</code></pre></div></div>
 
 <ol>
   <li>Build</li>
 </ol>
 
-<pre><code class="language-bash=">mkdir build
-cd build
-# set CMAKE_PREFIX_PATH to let cmake knows where to find the cmake file of libtorch.
-cmake -DCMAKE_PREFIX_PATH="{libtorch path}" ..
-# OR if you set inside CMakeLists.txt you can alternatively run:
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>build
+<span class="nb">cd </span>build
+<span class="c"># set CMAKE_PREFIX_PATH to let cmake knows where to find the cmake file of libtorch.</span>
+cmake <span class="nt">-DCMAKE_PREFIX_PATH</span><span class="o">=</span><span class="s2">"{libtorch path}"</span> ..
+<span class="c"># OR if you set inside CMakeLists.txt you can alternatively run:</span>
 cmake ..
 
-# build, equivalent to "make"
-cmake --build . --config Release
+<span class="c"># build, equivalent to "make"</span>
+cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt">--config</span> Release
 
-# after building, dlls will be generated at the project root, 
-# copy them to the path in where the executable is.
-cp c:\...\test-torch\*.dll C:\...\test-torch\build\Release\
-cd Release
+<span class="c"># after building, dlls will be generated at the project root, </span>
+<span class="c"># copy them to the path in where the executable is.</span>
+<span class="nb">cp </span>c:<span class="se">\.</span>..<span class="se">\t</span>est-torch<span class="se">\*</span>.dll C:<span class="se">\.</span>..<span class="se">\t</span>est-torch<span class="se">\b</span>uild<span class="se">\R</span>elease<span class="se">\</span>
+<span class="nb">cd </span>Release
 
-# run!
-.\test-torch.exe
-</code></pre>
+<span class="c"># run!</span>
+.<span class="se">\t</span>est-torch.exe
+</code></pre></div></div>
 
 <p>reference</p>
 <ul>

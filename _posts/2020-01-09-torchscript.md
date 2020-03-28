@@ -11,7 +11,7 @@ This article is mainly about serialize a pytorch model, and load it into C++.
 "Trace" is a mechanism which pytorch used to record the behavior of neural nets. 
 To perform tracing, first you have to initialize your model, say that you have trained your model until it reach production level.
 
-```python=
+```python
 import torch
 from your.model.path import Model
 
@@ -25,14 +25,14 @@ model.load_state_dict(weight)
 
 Then you have to make an `example`, i.e., a tensor that match the size of `model`'s input size. Note that you will have to set `model` to `eval()` for disabling training features since we are doing this for inference.
 
-```python=
+```python
 example = torch.rand(1, 3, 512, 512)
 model.eval()
 ```
 
 After configuration, just simply called `torch.jit.trace` and pass the model and example to it. Once the tracing is done successfully, you can saved it into file.
 
-```python=
+```python
 traced = torch.jit.trace(model, example, check_trace=True)
 traced.save("traced_model.pt")
 ```
@@ -40,7 +40,7 @@ traced.save("traced_model.pt")
 You can make a simple check to see if the output is the same as the original model.
 
 
-```python=
+```python
 traced_model = torch.jit.load("traced_model.pt")
 
 model(example)
@@ -60,7 +60,7 @@ The traced torchscript file does not seems to be platform-independent, if you tr
 As offical document stated, if your model contains control flows(`if`, `else`), or any operations that depends on the value of `example`, i.e., `example` cannot reach some parts in your model, the traced model will not perform the same as the original model. To tackle this, you will need to add `@torch.jit.script` in every function which contains control flow.
 
 e.g.
-```python=
+```python
 class Model(nn.Module):
     ...
     def forward(self, x):
@@ -93,7 +93,7 @@ Though the official document has made it pretty stright forward, I do have some 
     ```
 2. Preparing main.cpp, here I will extend the [official example code](https://pytorch.org/tutorials/advanced/cpp_export.html). The first part below is how c++ load a traced model, simply call `torch::jit::load()`.
 
-```cpp=
+```cpp
 #include <torch/script.h>
 
 #include <iostream>
@@ -117,7 +117,7 @@ int main() {
 ```
 Say that you have an integer pointer (1-D array, flatten from a 2 or 3-D array) `int* data`, which is a way that C++ store image data. You can simply use `torch::from_blob()` to read the data into tensor, the sizes of it will be given in the second argument. The `options` is the way that `torch` used (as the third argument) to decide the type that will be read. You can find more in [here](https://pytorch.org/cppdocs/notes/tensor_creation.html#configuring-properties-of-the-tensor).
 
-```cpp=
+```cpp
   ... (still in main())
   
   int height = 512;
@@ -140,7 +140,7 @@ Lastly, you will have to initialize a vector of `torch::jit::IValue` as an input
 - observe the shape by `sizes()`
 - cast the value into primitive type by `item<type>()`
 
-```cpp=
+```cpp
   ... (still in main())
   
   std::vector<torch::jit::IValue> input;
@@ -172,7 +172,7 @@ Lastly, you will have to initialize a vector of `torch::jit::IValue` as an input
 - The `MSVC` part
     For Windows OS only, provided by document.
 
-```cmake=
+```cmake
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(test-torch)
 
@@ -199,7 +199,7 @@ endif (MSVC)
 
 2. Build
 
-```bash=
+```bash
 mkdir build
 cd build
 # set CMAKE_PREFIX_PATH to let cmake knows where to find the cmake file of libtorch.
