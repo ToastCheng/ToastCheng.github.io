@@ -1,6 +1,6 @@
 ---
 title:  "How to deal with non-HTTP traffic in Nginx?"
-date:   2020-05-09T21:02:50+0800
+date:   2020-05-08T21:02:50+0800
 tags: [nginx, http]
 categories: technique
 ---
