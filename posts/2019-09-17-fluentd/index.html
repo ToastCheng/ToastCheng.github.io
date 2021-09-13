@@ -1,13 +1,120 @@
-<!doctype html><html lang=en-us><head><title>Fluentd: General Note |
-ShihCheng Tu</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content="Fluentd is a powerful open-source logging tool that has flexible functionalities."><meta property="og:title" content="Fluentd: General note"><meta property="og:description" content="Fluentd is a powerful open-source logging tool that has flexible functionalities."><meta property="og:type" content="article"><meta property="og:url" content="https://toastcheng.github.io/posts/2019-09-17-fluentd/"><meta property="article:published_time" content="2019-09-17T21:45:14+08:00"><meta property="article:modified_time" content="2019-09-17T21:45:14+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Fluentd: General note"><meta name=twitter:description content="Fluentd is a powerful open-source logging tool that has flexible functionalities."><meta itemprop=name content="Fluentd: General note"><meta itemprop=description content="Fluentd is a powerful open-source logging tool that has flexible functionalities."><meta itemprop=datePublished content="2019-09-17T21:45:14+08:00"><meta itemprop=dateModified content="2019-09-17T21:45:14+08:00"><meta itemprop=wordCount content="752"><meta itemprop=keywords content="note,fluentd,backend,"><link rel=canonical href=https://toastcheng.github.io/posts/2019-09-17-fluentd/><link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico><link rel=stylesheet href=/css/font-awesome.min.css><link rel=stylesheet href=/css/bulma.min.css><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-168042428-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script><script src=/js/ramium.js></script><link rel=stylesheet href=/css/ramium.css></head><body><nav class="navbar is-dark" role=navigation aria-label="main navigation"><div class=navbar-brand><a class=navbar-item href=/><strong>ShihCheng Tu</strong></a>
-<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample><span aria-hidden=true></span><span aria-hidden=true></span><span aria-hidden=true></span></a></div><div id=navbarBasicExample class=navbar-menu><div class=navbar-start><a class=navbar-item href=/>Home</a><div class="navbar-item has-dropdown is-hoverable"><a class=navbar-link>This Blog</a><div class=navbar-dropdown><a class=navbar-item href=/tags/>All Tags</a>
+<!doctype html><html lang=en-us>
+<head><title>
+Fluentd: General Note |
+ShihCheng Tu</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name=description content="Fluentd is a powerful open-source logging tool that has flexible functionalities.
+    ">
+<meta property="og:title" content="Fluentd: General note">
+<meta property="og:description" content="Fluentd is a powerful open-source logging tool that has flexible functionalities.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://toastcheng.github.io/posts/2019-09-17-fluentd/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2019-09-17T21:45:14+08:00">
+<meta property="article:modified_time" content="2019-09-17T21:45:14+08:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Fluentd: General note">
+<meta name=twitter:description content="Fluentd is a powerful open-source logging tool that has flexible functionalities.">
+<meta itemprop=name content="Fluentd: General note">
+<meta itemprop=description content="Fluentd is a powerful open-source logging tool that has flexible functionalities."><meta itemprop=datePublished content="2019-09-17T21:45:14+08:00">
+<meta itemprop=dateModified content="2019-09-17T21:45:14+08:00">
+<meta itemprop=wordCount content="752">
+<meta itemprop=keywords content="note,fluentd,backend,">
+<link rel=canonical href=https://toastcheng.github.io/posts/2019-09-17-fluentd/>
+<link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico>
+<link rel=stylesheet href=/css/font-awesome.min.css>
+<link rel=stylesheet href=/css/bulma.min.css>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-168042428-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script src=/js/ramium.js></script>
+<link rel=stylesheet href=/css/ramium.css>
+</head>
+<body><nav class="navbar is-dark" role=navigation aria-label="main navigation">
+<div class=navbar-brand>
+<a class=navbar-item href=/>
+<strong>ShihCheng Tu </strong>
+</a>
+<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+</a>
+</div>
+<div id=navbarBasicExample class=navbar-menu>
+<div class=navbar-start>
+<a class=navbar-item href=/>Home</a>
+<div class="navbar-item has-dropdown is-hoverable">
+<a class=navbar-link>This Blog</a>
+<div class=navbar-dropdown>
+<a class=navbar-item href=/tags/>All Tags</a>
 <a class=navbar-item href=/sections/>All Sections</a>
-<a class=navbar-item href=/posts/>All Posts</a></div></div><a class=navbar-item href=/author/>Author</a></div><div class=navbar-end><a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank><i class="fa fa-github fa-2x"></i></a><div class=navbar-item><form id=cse-search-box-form-id onsubmit="return executeQuery();" role=search><div class="field has-addons"><div class="control is-expanded"><input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome></div><div class=control><button type=submit class="button is-black">
-<i class="fa fa-search"></i></a></button></div></div></form></div></div></div></nav><div class="columns is-centered"><div id=page-body class="column is-7"><div class="content blog"><h1>Fluentd: General Note</h1><div id=infobar class="level is-mobile"><div class=level-left><div class=level-item><p class="subtitle info date">Sep 17, 2019</p></div><div class=level-item><p class="subtitle info">4 mins read</p></div></div><div class="level-right is-hidden-touch"><div class=tags><a class="tag is-dark is-rounded" href=/tags/note>Note</a>
+<a class=navbar-item href=/posts/>All Posts</a>
+</div>
+</div>
+<a class=navbar-item href=/author/>Author</a>
+</div>
+<div class=navbar-end>
+<a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank>
+<i class="fa fa-github fa-2x"></i>
+</a>
+<div class=navbar-item>
+<form id=cse-search-box-form-id onsubmit="return executeQuery()" role=search>
+<div class="field has-addons">
+<div class="control is-expanded">
+<input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome>
+</div>
+<div class=control>
+<button type=submit class="button is-black">
+<i class="fa fa-search"></i>
+</a>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</nav><div class="columns is-centered">
+<div id=page-body class="column is-7">
+<div class="content blog">
+<h1>Fluentd: General Note</h1>
+<div id=infobar class="level is-mobile">
+<div class=level-left>
+<div class=level-item>
+<p class="subtitle info date">Sep 17, 2019
+</p>
+</div>
+<div class=level-item>
+<p class="subtitle info">
+4 mins read
+</p>
+</div>
+</div>
+<div class="level-right is-hidden-touch">
+<div class=tags>
+<a class="tag is-dark is-rounded" href=/tags/note>Note</a>
 <a class="tag is-dark is-rounded" href=/tags/fluentd>Fluentd</a>
-<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a></div></div></div><div class="tags is-hidden-desktop"><a class="tag is-dark is-rounded" href=/tags/note>Note</a>
+<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a>
+</div>
+</div>
+</div>
+<div class="tags is-hidden-desktop">
+<a class="tag is-dark is-rounded" href=/tags/note>Note</a>
 <a class="tag is-dark is-rounded" href=/tags/fluentd>Fluentd</a>
-<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a></div><div class=blog-text><p><a href=https://docs.fluentd.org/>Fluentd</a> is a powerful open-source logging tool that has flexible functionalities.</p><p>The overall fluentd&rsquo;s workflow:</p><p><img src="https://gblobscdn.gitbook.com/assets%2F-LR7OsqPORtP86IQxs6E%2F-LWNPJuIG9Ym5ELlFCti%2F-LWNPOPNQ1l9hvoJ2FIp%2Ffluentd-architecture.png?alt=media" alt></p><p>The logic behinds fluentd is quite simple:</p><ol><li>There are sources of data, such as file, http traffic, etc., you tell fluentd what to listen.</li><li>You define <strong>rule</strong>s that specify what <strong>event</strong> should be logged.</li><li>You define how the <strong>event</strong> should be processed.</li></ol><p>The simplified structure of fluentd&rsquo;s configuration file can reflect the logic above:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
+<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a>
+</div>
+<div class=blog-text>
+<p><a href=https://docs.fluentd.org/>Fluentd</a> is a powerful open-source logging tool that has flexible functionalities.</p>
+<p>The overall fluentd&rsquo;s workflow:</p>
+<p><img src="https://gblobscdn.gitbook.com/assets%2F-LR7OsqPORtP86IQxs6E%2F-LWNPJuIG9Ym5ELlFCti%2F-LWNPOPNQ1l9hvoJ2FIp%2Ffluentd-architecture.png?alt=media" alt></p>
+<p>The logic behinds fluentd is quite simple:</p>
+<ol>
+<li>There are sources of data, such as file, http traffic, etc., you tell fluentd what to listen.</li>
+<li>You define <strong>rule</strong>s that specify what <strong>event</strong> should be logged.</li>
+<li>You define how the <strong>event</strong> should be processed.</li>
+</ol>
+<p>The simplified structure of fluentd&rsquo;s configuration file can reflect the logic above:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
   1. You tell fluentd what to listen.
 <span style=color:#f92672>&lt;/source&gt;</span>
 
@@ -18,24 +125,50 @@ ShihCheng Tu</title><meta charset=utf-8><meta name=viewport content="width=devic
 <span style=color:#f92672>&lt;match&gt;</span>
   3. You tell fluentd what to do with the data.
 <span style=color:#f92672>&lt;/match&gt;</span>
-</code></pre></div><h3 id=directive>Directive</h3><ul><li><code>&lt;source></code>, the data source.</li><li><code>&lt;filter tag></code>, filter the data with <code>tag</code>.</li><li><code>&lt;match tag></code>, capture and store the data with <code>tag</code>.</li></ul><h3 id=event>Event</h3><p>A fluentd event consists of:</p><ul><li><code>tag</code>, where an event comes from.</li><li><code>time</code>.</li><li><code>record</code>, log content, JSON object.</li></ul><h3 id=plugins>Plugins</h3><p>A plugin in the context of fluentd is a kind of logic of operation. There are plenty of kinds of frequently used plugins.</p><h4 id=1-input-plugin>1. Input plugin</h4><p>Input plugin creates a <code>thread</code>, <code>socket</code>, and <code>listening socket</code>, it&rsquo;s used with the <code>&lt;source></code> directive that specify what kind of source that should be listen.</p><ul><li><code>tail</code>: tailing a target file as source, the <code>path</code> field specifies the file path to be tail.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
+</code></pre></div><h3 id=directive>Directive</h3>
+<ul>
+<li><code>&lt;source></code>, the data source.</li>
+<li><code>&lt;filter tag></code>, filter the data with <code>tag</code>.</li>
+<li><code>&lt;match tag></code>, capture and store the data with <code>tag</code>.</li>
+</ul>
+<h3 id=event>Event</h3>
+<p>A fluentd event consists of:</p>
+<ul>
+<li><code>tag</code>, where an event comes from.</li>
+<li><code>time</code>.</li>
+<li><code>record</code>, log content, JSON object.</li>
+</ul>
+<h3 id=plugins>Plugins</h3>
+<p>A plugin in the context of fluentd is a kind of logic of operation. There are plenty of kinds of frequently used plugins.</p>
+<h4 id=1-input-plugin>1. Input plugin</h4>
+<p>Input plugin creates a <code>thread</code>, <code>socket</code>, and <code>listening socket</code>, it&rsquo;s used with the <code>&lt;source></code> directive that specify what kind of source that should be listen.</p>
+<ul>
+<li><code>tail</code>: tailing a target file as source, the <code>path</code> field specifies the file path to be tail.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
   @type tail
   path /var/log/xxx.log
   tag tag.xxx
 <span style=color:#f92672>&lt;/source&gt;</span>
-</code></pre></div><ul><li><code>http</code>: listening http traffic</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
+</code></pre></div><ul>
+<li><code>http</code>: listening http traffic</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
   @type http
   port 9880
   bind 0.0.0.0
   body_size_limit 32m
   keepalive_timeout 10s
 <span style=color:#f92672>&lt;/source&gt;</span>
-</code></pre></div><h4 id=2-parser-plugin>2. Parser plugin</h4><p>Used with <code>&lt;parse></code> directive, parse the <strong>specific type</strong> incoming data into the following format:</p><pre><code>time:
+</code></pre></div><h4 id=2-parser-plugin>2. Parser plugin</h4>
+<p>Used with <code>&lt;parse></code> directive, parse the <strong>specific type</strong> incoming data into the following format:</p>
+<pre tabindex=0><code>time:
 &lt;timestamp&gt; (&lt;date time&gt;)
 
 record:
 &lt;json object&gt;
-</code></pre><p>For example:</p><pre><code>time:
+</code></pre><p>For example:</p>
+<pre tabindex=0><code>time:
 1362020400 (2013-02-28 12:00:00 +0900)
 
 record:
@@ -44,12 +177,17 @@ record:
   &quot;title&quot;: &quot;engineer&quot;,
   &quot;id&quot;   : 1
 }
-</code></pre><p>You can use this directive if you know the data format in advance.</p><h5 id=eg-1>e.g. 1</h5><p>If the input data is in json format, you can use <code>json</code> parser plugin to parse it:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;parse&gt;</span>
+</code></pre><p>You can use this directive if you know the data format in advance.</p>
+<h5 id=eg-1>e.g. 1</h5>
+<p>If the input data is in json format, you can use <code>json</code> parser plugin to parse it:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;parse&gt;</span>
   @type json
   json_parser json
 <span style=color:#f92672>&lt;/parse&gt;</span>
 </code></pre></div><p>Incoming event:
-<code>{"time":1362020400,"host":"192.168.0.1","size":777,"method":"PUT"}</code></p><p>Output:</p><pre><code>time:
+<code>{"time":1362020400,"host":"192.168.0.1","size":777,"method":"PUT"}</code></p>
+<p>Output:</p>
+<pre tabindex=0><code>time:
 1362020400 (2013-02-28 12:00:00 +0900)
 
 record:
@@ -58,8 +196,12 @@ record:
   &quot;size&quot;  : 777,
   &quot;method&quot;: &quot;PUT&quot;,
 }
-</code></pre><h5 id=eg-2>e.g. 2</h5><p>If your data source is nginx&rsquo;s log, you can use <code>nginx parser plugin</code>.</p><p>Incoming event:
-<code>127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0" -</code></p><p>Output:</p><pre><code>time:
+</code></pre><h5 id=eg-2>e.g. 2</h5>
+<p>If your data source is nginx&rsquo;s log, you can use <code>nginx parser plugin</code>.</p>
+<p>Incoming event:
+<code>127.0.0.1 192.168.0.1 - [28/Feb/2013:12:00:00 +0900] "GET / HTTP/1.1" 200 777 "-" "Opera/12.0" -</code></p>
+<p>Output:</p>
+<pre tabindex=0><code>time:
 1362020400 (28/Feb/2013:12:00:00 +0900)
 
 record:
@@ -75,7 +217,9 @@ record:
   &quot;agent&quot;               : &quot;Opera/12.0&quot;,
   &quot;http_x_forwarded_for&quot;: &quot;-&quot;
 }
-</code></pre><p>You will need to put the <code>&lt;parser></code> nested inside <code>&lt;source></code> or <code>&lt;filter></code></p><p>As a bigger example, if you have a <code>/var/log/xxx.log</code> file that you know in advance every line is a json object, you can use json parser, and right inside the <code>&lt;source></code> directive.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
+</code></pre><p>You will need to put the <code>&lt;parser></code> nested inside <code>&lt;source></code> or <code>&lt;filter></code></p>
+<p>As a bigger example, if you have a <code>/var/log/xxx.log</code> file that you know in advance every line is a json object, you can use json parser, and right inside the <code>&lt;source></code> directive.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;source&gt;</span>
   @type tail
   @id xxx_log
   path /var/log/xxx.log
@@ -92,27 +236,51 @@ record:
 <span style=color:#f92672>&lt;match</span> <span style=color:#960050;background-color:#1e0010>example.xxx</span><span style=color:#f92672>&gt;</span>
   ...decide what to do with the parsed data
 <span style=color:#f92672>&lt;/match&gt;</span>
-</code></pre></div><h4 id=3-formatter-plugin>3. Formatter plugin</h4><p>Used with <code>&lt;format></code> directive, transform the data <strong>into specific type</strong>.</p><ul><li><p><code>out_file</code>
-format each record into <code>time[delimiter]tag[delimiter]record\n</code>.</p></li><li><p><code>json</code></p></li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;format&gt;</span>
+</code></pre></div><h4 id=3-formatter-plugin>3. Formatter plugin</h4>
+<p>Used with <code>&lt;format></code> directive, transform the data <strong>into specific type</strong>.</p>
+<ul>
+<li>
+<p><code>out_file</code>
+format each record into <code>time[delimiter]tag[delimiter]record\n</code>.</p>
+</li>
+<li>
+<p><code>json</code></p>
+</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;format&gt;</span>
   @type json
   json_parser json
 <span style=color:#f92672>&lt;/format&gt;</span>
-</code></pre></div><p>You will need to put the <code>&lt;format></code> nested inside <code>&lt;match></code> just like <code>&lt;parser></code>.</p><h4 id=4-filter-plugin>4. Filter plugin</h4><ul><li><code>grep</code>
-Decides what data should be matched based on given rules.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;filter</span> <span style=color:#960050;background-color:#1e0010>foo.bar</span><span style=color:#f92672>&gt;</span>
+</code></pre></div><p>You will need to put the <code>&lt;format></code> nested inside <code>&lt;match></code> just like <code>&lt;parser></code>.</p>
+<h4 id=4-filter-plugin>4. Filter plugin</h4>
+<ul>
+<li><code>grep</code>
+Decides what data should be matched based on given rules.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;filter</span> <span style=color:#960050;background-color:#1e0010>foo.bar</span><span style=color:#f92672>&gt;</span>
   @type grep
   <span style=color:#f92672>&lt;exclude&gt;</span>
     key message
     pattern /uncool/
   <span style=color:#f92672>&lt;/exclude&gt;</span>
 <span style=color:#f92672>&lt;/filter&gt;</span>
-</code></pre></div><p>The above configuration will remove the events that <code>message</code> field contains <code>uncool</code>.</p><ul><li><code>record_transformer</code>
-Add custom record.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;filter</span> <span style=color:#960050;background-color:#1e0010>foo.bar</span><span style=color:#f92672>&gt;</span>
+</code></pre></div><p>The above configuration will remove the events that <code>message</code> field contains <code>uncool</code>.</p>
+<ul>
+<li><code>record_transformer</code>
+Add custom record.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;filter</span> <span style=color:#960050;background-color:#1e0010>foo.bar</span><span style=color:#f92672>&gt;</span>
   @type record_transformer
   <span style=color:#f92672>&lt;record&gt;</span>
     hostname &#34;#{Socket.gethostname}&#34;
   <span style=color:#f92672>&lt;/record&gt;</span>
 <span style=color:#f92672>&lt;/filter&gt;</span>
-</code></pre></div><h4 id=5-output-plugin>5. Output plugin</h4><p>Output plugin are used with <code>&lt;match></code> directive.</p><ul><li><code>file</code>: output logs to file in <code>path</code>.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;match</span> <span style=color:#960050;background-color:#1e0010>pattern</span><span style=color:#f92672>&gt;</span>
+</code></pre></div><h4 id=5-output-plugin>5. Output plugin</h4>
+<p>Output plugin are used with <code>&lt;match></code> directive.</p>
+<ul>
+<li><code>file</code>: output logs to file in <code>path</code>.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;match</span> <span style=color:#960050;background-color:#1e0010>pattern</span><span style=color:#f92672>&gt;</span>
   @type file
   path /var/log/fluent/myapp
   compress gzip
@@ -122,7 +290,8 @@ Add custom record.</li></ul><div class=highlight><pre style=color:#f8f8f2;backgr
     timekey_wait 10m
   <span style=color:#f92672>&lt;/buffer&gt;</span>
 <span style=color:#f92672>&lt;/match&gt;</span>
-</code></pre></div><p>The <code>&lt;buffer></code> buffer the data into <code>file</code> or <code>memory</code> (default to be specified by output plugin)</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml>// save buffer to file:
+</code></pre></div><p>The <code>&lt;buffer></code> buffer the data into <code>file</code> or <code>memory</code> (default to be specified by output plugin)</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml>// save buffer to file:
 <span style=color:#f92672>&lt;buffer&gt;</span>
   @type file
 <span style=color:#f92672>&lt;/buffer&gt;</span>
@@ -131,34 +300,87 @@ Add custom record.</li></ul><div class=highlight><pre style=color:#f8f8f2;backgr
 <span style=color:#f92672>&lt;buffer&gt;</span>
   @type memory
 <span style=color:#f92672>&lt;/buffer&gt;</span>
-</code></pre></div><ul><li><code>out_elasticsearch</code>: output to Elasticsearch.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;match</span> <span style=color:#960050;background-color:#1e0010>my.logs</span><span style=color:#f92672>&gt;</span>
+</code></pre></div><ul>
+<li><code>out_elasticsearch</code>: output to Elasticsearch.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;match</span> <span style=color:#960050;background-color:#1e0010>my.logs</span><span style=color:#f92672>&gt;</span>
   @type elasticsearch
   host localhost
   port 9200
   logstash_format true
 <span style=color:#f92672>&lt;/match&gt;</span>
-</code></pre></div><h3 id=example>Example</h3><p>Listening for <strong>HTTP requests</strong> on port 8888:</p><pre><code class=language-fluentd data-lang=fluentd>&lt;source&gt;
+</code></pre></div><h3 id=example>Example</h3>
+<p>Listening for <strong>HTTP requests</strong> on port 8888:</p>
+<pre tabindex=0><code class=language-fluentd data-lang=fluentd>&lt;source&gt;
     @type http
     port 8888
     bind 0.0.0.0
 &lt;/source&gt;
-</code></pre><p>if the <strong>in coming event</strong> has a <strong>Tag</strong> equals to <code>test.cycle</code>, the rule will be matched:</p><pre><code class=language-fluentd data-lang=fluentd>&lt;match test.cycle&gt;
+</code></pre><p>if the <strong>in coming event</strong> has a <strong>Tag</strong> equals to <code>test.cycle</code>, the rule will be matched:</p>
+<pre tabindex=0><code class=language-fluentd data-lang=fluentd>&lt;match test.cycle&gt;
     @type stdout
 &lt;/match&gt;
-</code></pre><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ curl -i -X POST -d <span style=color:#e6db74>&#39;json={&#34;action&#34;:&#34;login&#34;,&#34;user&#34;:2}&#39;</span> http://localhost:8888/test.cycle
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ curl -i -X POST -d <span style=color:#e6db74>&#39;json={&#34;action&#34;:&#34;login&#34;,&#34;user&#34;:2}&#39;</span> http://localhost:8888/test.cycle
 HTTP/1.1 <span style=color:#ae81ff>200</span> OK
 Content-type: text/plain
 Connection: Keep-Alive
 Content-length: <span style=color:#ae81ff>0</span>
-</code></pre></div><h3 id=integrate-fluentd-with-k8s>Integrate fluentd with k8s</h3><p>For Kubernetes, a DaemonSet ensures that all (or some) nodes run a copy of a pod.
-In order to solve log collection we are going to implement a Fluentd DaemonSet.</p><h5 id=references>References</h5><ul><li><a href=https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes>How To Set Up an Elasticsearch, Fluentd and Kibana (EFK) Logging Stack on Kubernetes</a></li><li><a href=https://docs.fluentd.org/container-deployment/kubernetes>fluentd-k8s</a></li></ul></div></div><div id=social-media-share class=has-text-centered><p><i>Sharing is caring!</i></p><br><div class=share-buttons><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Facebook. Opens in a new window."><img src=/img/icons/45px/facebook.png></a>
-<a href="https://twitter.com/intent/tweet?text=Fluentd%3a%20General%20note&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Twitter. Opens in a new window."><img src=/img/icons/45px/twitter.png></a>
-<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Reddit. Opens in a new window."><img src=/img/icons/45px/reddit.png></a>
-<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Pinterest. Opens in a new window."><img src=/img/icons/45px/pinterest.png></a>
-<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Tumblr. Opens in a new window."><img src=/img/icons/45px/tumblr.png></a>
+</code></pre></div><h3 id=integrate-fluentd-with-k8s>Integrate fluentd with k8s</h3>
+<p>For Kubernetes, a DaemonSet ensures that all (or some) nodes run a copy of a pod.
+In order to solve log collection we are going to implement a Fluentd DaemonSet.</p>
+<h5 id=references>References</h5>
+<ul>
+<li><a href=https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes>How To Set Up an Elasticsearch, Fluentd and Kibana (EFK) Logging Stack on Kubernetes</a></li>
+<li><a href=https://docs.fluentd.org/container-deployment/kubernetes>fluentd-k8s</a></li>
+</ul>
+</div>
+</div><div id=social-media-share class=has-text-centered>
+<p><i>Sharing is caring!</i></p>
+<br>
+<div class=share-buttons>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Facebook. Opens in a new window.">
+<img src=/img/icons/45px/facebook.png>
+</a>
+<a href="https://twitter.com/intent/tweet?text=Fluentd%3a%20General%20note&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Twitter. Opens in a new window.">
+<img src=/img/icons/45px/twitter.png>
+</a>
+<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Reddit. Opens in a new window.">
+<img src=/img/icons/45px/reddit.png>
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Pinterest. Opens in a new window.">
+<img src=/img/icons/45px/pinterest.png>
+</a>
+<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Tumblr. Opens in a new window.">
+<img src=/img/icons/45px/tumblr.png>
+</a>
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f
-			&title=Fluentd%3a%20General%20note&summary=Fluentd%20is%20a%20powerful%20open-source%20logging%20tool%20that%20has%20flexible%20functionalities.&source=rafed123.github.io" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on LinkedIn. Opens in a new window."><img src=/img/icons/45px/linkedin.png></a>
-<a href="mailto:?subject=Fluentd%3a%20General%20note&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" title="Share via Email. Opens in a new window."><img src=/img/icons/45px/mail.png></a></div></div><br><div id=disqus_thread></div><script type=text/javascript>(function(){if(window.location.hostname=="localhost")
-return;var dsq=document.createElement('script');dsq.type='text/javascript';dsq.async=true;var disqus_shortname='toastcheng';dsq.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(dsq);})();</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript></div></div><script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script><gcse:searchresults-only></gcse:searchresults-only><footer class="footer has-background-dark"><div class="content has-text-centered has-text-white"><p>© 2020 Ramium. Powered by
-<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>Hugo</a>. Theme
-<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>Ramium.</a></p></div></footer></body></html>
+			&title=Fluentd%3a%20General%20note&summary=Fluentd%20is%20a%20powerful%20open-source%20logging%20tool%20that%20has%20flexible%20functionalities.&source=rafed123.github.io" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on LinkedIn. Opens in a new window.">
+<img src=/img/icons/45px/linkedin.png>
+</a>
+<a href="mailto:?subject=Fluentd%3a%20General%20note&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2019-09-17-fluentd%2f" title="Share via Email. Opens in a new window.">
+<img src=/img/icons/45px/mail.png>
+</a>
+</div>
+</div>
+<br>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='toastcheng',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+</div>
+</div>
+<script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script>
+<gcse:searchresults-only></gcse:searchresults-only>
+<footer class="footer has-background-dark">
+<div class="content has-text-centered has-text-white">
+<p>
+© 2020 Ramium. Powered by
+<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>
+Hugo</a>. Theme
+<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>
+Ramium.
+</a>
+</p>
+</div>
+</footer>
+</body>
+</html>

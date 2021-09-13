@@ -1,18 +1,116 @@
-<!doctype html><html lang=en-us><head><title>TypeScript: Declaration Merging as an Extension |
-ShihCheng Tu</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content="If you have written Swift, there is an extension pattern that is pretty neat and handy."><meta property="og:title" content="TypeScript: Declaration merging as an extension"><meta property="og:description" content="If you have written Swift, there is an extension pattern that is pretty neat and handy."><meta property="og:type" content="article"><meta property="og:url" content="https://toastcheng.github.io/posts/2020-11-24-declaration-merging/"><meta property="article:published_time" content="2020-11-24T18:43:00+08:00"><meta property="article:modified_time" content="2020-11-24T18:43:00+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="TypeScript: Declaration merging as an extension"><meta name=twitter:description content="If you have written Swift, there is an extension pattern that is pretty neat and handy."><meta itemprop=name content="TypeScript: Declaration merging as an extension"><meta itemprop=description content="If you have written Swift, there is an extension pattern that is pretty neat and handy."><meta itemprop=datePublished content="2020-11-24T18:43:00+08:00"><meta itemprop=dateModified content="2020-11-24T18:43:00+08:00"><meta itemprop=wordCount content="955"><meta itemprop=keywords content="note,typescript,extension,declaration merging,factory pattern,"><link rel=canonical href=https://toastcheng.github.io/posts/2020-11-24-declaration-merging/><link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico><link rel=stylesheet href=/css/font-awesome.min.css><link rel=stylesheet href=/css/bulma.min.css><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-168042428-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script><script src=/js/ramium.js></script><link rel=stylesheet href=/css/ramium.css></head><body><nav class="navbar is-dark" role=navigation aria-label="main navigation"><div class=navbar-brand><a class=navbar-item href=/><strong>ShihCheng Tu</strong></a>
-<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample><span aria-hidden=true></span><span aria-hidden=true></span><span aria-hidden=true></span></a></div><div id=navbarBasicExample class=navbar-menu><div class=navbar-start><a class=navbar-item href=/>Home</a><div class="navbar-item has-dropdown is-hoverable"><a class=navbar-link>This Blog</a><div class=navbar-dropdown><a class=navbar-item href=/tags/>All Tags</a>
+<!doctype html><html lang=en-us>
+<head><title>
+TypeScript: Declaration Merging as an Extension |
+ShihCheng Tu</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name=description content="If you have written Swift, there is an extension pattern that is pretty neat and handy.
+    ">
+<meta property="og:title" content="TypeScript: Declaration merging as an extension">
+<meta property="og:description" content="If you have written Swift, there is an extension pattern that is pretty neat and handy.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://toastcheng.github.io/posts/2020-11-24-declaration-merging/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-11-24T18:43:00+08:00">
+<meta property="article:modified_time" content="2020-11-24T18:43:00+08:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="TypeScript: Declaration merging as an extension">
+<meta name=twitter:description content="If you have written Swift, there is an extension pattern that is pretty neat and handy.">
+<meta itemprop=name content="TypeScript: Declaration merging as an extension">
+<meta itemprop=description content="If you have written Swift, there is an extension pattern that is pretty neat and handy."><meta itemprop=datePublished content="2020-11-24T18:43:00+08:00">
+<meta itemprop=dateModified content="2020-11-24T18:43:00+08:00">
+<meta itemprop=wordCount content="955">
+<meta itemprop=keywords content="note,typescript,extension,declaration merging,factory pattern,">
+<link rel=canonical href=https://toastcheng.github.io/posts/2020-11-24-declaration-merging/>
+<link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico>
+<link rel=stylesheet href=/css/font-awesome.min.css>
+<link rel=stylesheet href=/css/bulma.min.css>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-168042428-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script src=/js/ramium.js></script>
+<link rel=stylesheet href=/css/ramium.css>
+</head>
+<body><nav class="navbar is-dark" role=navigation aria-label="main navigation">
+<div class=navbar-brand>
+<a class=navbar-item href=/>
+<strong>ShihCheng Tu </strong>
+</a>
+<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+</a>
+</div>
+<div id=navbarBasicExample class=navbar-menu>
+<div class=navbar-start>
+<a class=navbar-item href=/>Home</a>
+<div class="navbar-item has-dropdown is-hoverable">
+<a class=navbar-link>This Blog</a>
+<div class=navbar-dropdown>
+<a class=navbar-item href=/tags/>All Tags</a>
 <a class=navbar-item href=/sections/>All Sections</a>
-<a class=navbar-item href=/posts/>All Posts</a></div></div><a class=navbar-item href=/author/>Author</a></div><div class=navbar-end><a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank><i class="fa fa-github fa-2x"></i></a><div class=navbar-item><form id=cse-search-box-form-id onsubmit="return executeQuery();" role=search><div class="field has-addons"><div class="control is-expanded"><input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome></div><div class=control><button type=submit class="button is-black">
-<i class="fa fa-search"></i></a></button></div></div></form></div></div></div></nav><div class="columns is-centered"><div id=page-body class="column is-7"><div class="content blog"><h1>TypeScript: Declaration Merging as an Extension</h1><div id=infobar class="level is-mobile"><div class=level-left><div class=level-item><p class="subtitle info date">Nov 24, 2020</p></div><div class=level-item><p class="subtitle info">5 mins read</p></div></div><div class="level-right is-hidden-touch"><div class=tags><a class="tag is-dark is-rounded" href=/tags/note>Note</a>
+<a class=navbar-item href=/posts/>All Posts</a>
+</div>
+</div>
+<a class=navbar-item href=/author/>Author</a>
+</div>
+<div class=navbar-end>
+<a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank>
+<i class="fa fa-github fa-2x"></i>
+</a>
+<div class=navbar-item>
+<form id=cse-search-box-form-id onsubmit="return executeQuery()" role=search>
+<div class="field has-addons">
+<div class="control is-expanded">
+<input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome>
+</div>
+<div class=control>
+<button type=submit class="button is-black">
+<i class="fa fa-search"></i>
+</a>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</nav><div class="columns is-centered">
+<div id=page-body class="column is-7">
+<div class="content blog">
+<h1>TypeScript: Declaration Merging as an Extension</h1>
+<div id=infobar class="level is-mobile">
+<div class=level-left>
+<div class=level-item>
+<p class="subtitle info date">Nov 24, 2020
+</p>
+</div>
+<div class=level-item>
+<p class="subtitle info">
+5 mins read
+</p>
+</div>
+</div>
+<div class="level-right is-hidden-touch">
+<div class=tags>
+<a class="tag is-dark is-rounded" href=/tags/note>Note</a>
 <a class="tag is-dark is-rounded" href=/tags/typescript>Typescript</a>
 <a class="tag is-dark is-rounded" href=/tags/extension>Extension</a>
 <a class="tag is-dark is-rounded" href=/tags/declaration-merging>Declaration Merging</a>
-<a class="tag is-dark is-rounded" href=/tags/factory-pattern>Factory Pattern</a></div></div></div><div class="tags is-hidden-desktop"><a class="tag is-dark is-rounded" href=/tags/note>Note</a>
+<a class="tag is-dark is-rounded" href=/tags/factory-pattern>Factory Pattern</a>
+</div>
+</div>
+</div>
+<div class="tags is-hidden-desktop">
+<a class="tag is-dark is-rounded" href=/tags/note>Note</a>
 <a class="tag is-dark is-rounded" href=/tags/typescript>Typescript</a>
 <a class="tag is-dark is-rounded" href=/tags/extension>Extension</a>
 <a class="tag is-dark is-rounded" href=/tags/declaration-merging>Declaration merging</a>
-<a class="tag is-dark is-rounded" href=/tags/factory-pattern>Factory pattern</a></div><div class=blog-text><p>If you have written Swift, there is an <a href=https://docs.swift.org/swift-book/LanguageGuide/Extensions.html>extension pattern</a> that is pretty neat and handy.
-You can define customized behaviors on top of some existing class, even primitives, like this:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-swift data-lang=swift><span style=color:#75715e>// borrow from swift documentation.</span>
+<a class="tag is-dark is-rounded" href=/tags/factory-pattern>Factory pattern</a>
+</div>
+<div class=blog-text>
+<p>If you have written Swift, there is an <a href=https://docs.swift.org/swift-book/LanguageGuide/Extensions.html>extension pattern</a> that is pretty neat and handy.
+You can define customized behaviors on top of some existing class, even primitives, like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-swift data-lang=swift><span style=color:#75715e>// borrow from swift documentation.</span>
 <span style=color:#66d9ef>extension</span> <span style=color:#a6e22e>Double</span> {
     <span style=color:#66d9ef>var</span> km: Double { <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>self</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>1_000.0</span> }
     <span style=color:#66d9ef>var</span> m: Double { <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>self</span> }
@@ -21,7 +119,12 @@ You can define customized behaviors on top of some existing class, even primitiv
     <span style=color:#66d9ef>var</span> ft: Double { <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>self</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>3.28084</span> }
 }
 <span style=color:#66d9ef>let</span> oneInch = <span style=color:#ae81ff>25.4</span>.mm
-</code></pre></div><p>When I was first writing in typescript, I was curious about if there is any way that can achieve this extension pattern&mldr;?</p><p>Fortunately, there does exist!</p><p>In typescript, there is a concept called <a href=https://www.typescriptlang.org/docs/handbook/declaration-merging.html>Declaration Merging</a>. To put it simpler, declaration merging is that compiler merge two or more declaration into a single one.</p><h4 id=a-few-examples>A few examples</h4><p>You can define interfaces with same name in different block of code, and declare variable of it with both attributes:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>A</span> {
+</code></pre></div><p>When I was first writing in typescript, I was curious about if there is any way that can achieve this extension pattern&mldr;?</p>
+<p>Fortunately, there does exist!</p>
+<p>In typescript, there is a concept called <a href=https://www.typescriptlang.org/docs/handbook/declaration-merging.html>Declaration Merging</a>. To put it simpler, declaration merging is that compiler merge two or more declaration into a single one.</p>
+<h4 id=a-few-examples>A few examples</h4>
+<p>You can define interfaces with same name in different block of code, and declare variable of it with both attributes:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span>;
   <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>number</span>;
 }
@@ -31,7 +134,8 @@ You can define customized behaviors on top of some existing class, even primitiv
 }
 
 <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>A</span> <span style=color:#f92672>=</span> { <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>1</span>, <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>2</span>, <span style=color:#a6e22e>c</span>: <span style=color:#66d9ef>3</span> };
-</code></pre></div><p>Merging namespaces:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>namespace</span> <span style=color:#a6e22e>A</span> {
+</code></pre></div><p>Merging namespaces:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>namespace</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span>;
 }
 
@@ -44,7 +148,9 @@ You can define customized behaviors on top of some existing class, even primitiv
   <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span>;
   <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>number</span>;
 }
-</code></pre></div><p>Merging namespace with enum, class, and interface is also possible.</p><p>Class + Namespace:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
+</code></pre></div><p>Merging namespace with enum, class, and interface is also possible.</p>
+<p>Class + Namespace:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>123</span>;
 }
 
@@ -56,7 +162,8 @@ You can define customized behaviors on top of some existing class, even primitiv
 <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>instance</span>.<span style=color:#a6e22e>a</span>); <span style=color:#75715e>// 123
 </span><span style=color:#75715e></span>
 <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>A</span>.<span style=color:#a6e22e>b</span>); <span style=color:#75715e>// 456
-</span></code></pre></div><p>Enum + Namespace:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>A</span> {
+</span></code></pre></div><p>Enum + Namespace:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#a6e22e>B</span>,
   <span style=color:#a6e22e>C</span>,
   <span style=color:#a6e22e>D</span>,
@@ -70,8 +177,80 @@ You can define customized behaviors on top of some existing class, even primitiv
 </span><span style=color:#75715e></span><span style=color:#a6e22e>A</span>.<span style=color:#a6e22e>C</span>; <span style=color:#75715e>// 1
 </span><span style=color:#75715e></span><span style=color:#a6e22e>A</span>.<span style=color:#a6e22e>D</span>; <span style=color:#75715e>// 2
 </span><span style=color:#75715e></span><span style=color:#a6e22e>A</span>.<span style=color:#a6e22e>E</span>; <span style=color:#75715e>// 456
-</span></code></pre></div><h3 id=a-little-deep-dive>A little deep dive</h3><p>It looks like magic in the way that a class can be mixed with namespace.
-But under the hood what the compiler does is pretty straight forward.</p><p>Let&rsquo;s spend some time to look into the design of typescript.</p><p>An <code>identifier</code> in typescript may be one of three</p><ul><li>Namespace</li><li>Type</li><li>Value</li></ul><p>According to the <a href=https://www.typescriptlang.org/docs/handbook/declaration-merging.html#basic-concepts>Basic Concept</a> section, there is a table that records what will be created when you make a declartion:</p><table><thead><tr><th>Declaration Type</th><th>Namespace</th><th>Type</th><th>Value</th></tr></thead><tbody><tr><td>Namespace</td><td>V</td><td></td><td>V</td></tr><tr><td>Class</td><td></td><td>V</td><td>V</td></tr><tr><td>Enum</td><td></td><td>V</td><td>V</td></tr><tr><td>Interface</td><td></td><td>V</td><td></td></tr><tr><td>Type Alias</td><td></td><td>V</td><td></td></tr><tr><td>Function</td><td></td><td></td><td>V</td></tr><tr><td>Variable</td><td></td><td></td><td>V</td></tr></tbody></table><p>For example, when a class <code>Foo</code> is declared, both a type <code>Foo</code> and a value <code>Foo</code> are created.</p><ul><li>type: you can define a variable with type <code>Foo</code>.</li><li>value: you create a constructor named <code>Foo()</code>.</li></ul><h4 id=rule-of-thumb>Rule of thumb</h4><p>As long as the compiler can tell what an identifier really means in the context, everything is alright.</p><p>Continue the example of merging class ans namespace:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
+</span></code></pre></div><h3 id=a-little-deep-dive>A little deep dive</h3>
+<p>It looks like magic in the way that a class can be mixed with namespace.
+But under the hood what the compiler does is pretty straight forward.</p>
+<p>Let&rsquo;s spend some time to look into the design of typescript.</p>
+<p>An <code>identifier</code> in typescript may be one of three</p>
+<ul>
+<li>Namespace</li>
+<li>Type</li>
+<li>Value</li>
+</ul>
+<p>According to the <a href=https://www.typescriptlang.org/docs/handbook/declaration-merging.html#basic-concepts>Basic Concept</a> section, there is a table that records what will be created when you make a declartion:</p>
+<table>
+<thead>
+<tr>
+<th>Declaration Type</th>
+<th>Namespace</th>
+<th>Type</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Namespace</td>
+<td>V</td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>Class</td>
+<td></td>
+<td>V</td>
+<td>V</td>
+</tr>
+<tr>
+<td>Enum</td>
+<td></td>
+<td>V</td>
+<td>V</td>
+</tr>
+<tr>
+<td>Interface</td>
+<td></td>
+<td>V</td>
+<td></td>
+</tr>
+<tr>
+<td>Type Alias</td>
+<td></td>
+<td>V</td>
+<td></td>
+</tr>
+<tr>
+<td>Function</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td></td>
+<td></td>
+<td>V</td>
+</tr>
+</tbody>
+</table>
+<p>For example, when a class <code>Foo</code> is declared, both a type <code>Foo</code> and a value <code>Foo</code> are created.</p>
+<ul>
+<li>type: you can define a variable with type <code>Foo</code>.</li>
+<li>value: you create a constructor named <code>Foo()</code>.</li>
+</ul>
+<h4 id=rule-of-thumb>Rule of thumb</h4>
+<p>As long as the compiler can tell what an identifier really means in the context, everything is alright.</p>
+<p>Continue the example of merging class ans namespace:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>123</span>;
 }
 <span style=color:#75715e>// type: A is created.
@@ -82,7 +261,8 @@ But under the hood what the compiler does is pretty straight forward.</p><p>Let&
 }
 <span style=color:#75715e>// namespace: A is created.
 </span><span style=color:#75715e>// value: value A.b is created.
-</span></code></pre></div><p>Now, though the class and namespace has the same identifier <code>A</code>, depends on the context, the meaning can be totally different, and that&rsquo;s why the compiler does not complaint.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// A is a namespace created by the declaration of namespace A.
+</span></code></pre></div><p>Now, though the class and namespace has the same identifier <code>A</code>, depends on the context, the meaning can be totally different, and that&rsquo;s why the compiler does not complaint.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// A is a namespace created by the declaration of namespace A.
 </span><span style=color:#75715e>// get the variable b in namespace A: 456.
 </span><span style=color:#75715e></span><span style=color:#a6e22e>A</span>.<span style=color:#a6e22e>b</span>;
 
@@ -97,7 +277,13 @@ But under the hood what the compiler does is pretty straight forward.</p><p>Let&
 
 <span style=color:#75715e>// A is a type created by the declaration of class A.
 </span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>A</span>;
-</code></pre></div><p>In the typescript deep dive documentation, the <a href=https://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html#adding-using-a-namespace>adding using a namespace</a> section, it menthions:</p><blockquote><p>This is legal as long as it does not create a conflict. A general rule of thumb is that values always conflict with other values of the same name unless they are declared as namespaces, types will conflict if they are declared with a type alias declaration (type s = string), and namespaces never conflict.</p></blockquote><p>You have to make sure your <code>identifier</code> does not conflict, the compiler is smart enough to resolve the namespace / type / value in the context, or you will get <code>error TS1128: Declaration or statement expected.</code>.</p><p>Try to run this code in your environment such as in <code>ts-node</code>.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
+</code></pre></div><p>In the typescript deep dive documentation, the <a href=https://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html#adding-using-a-namespace>adding using a namespace</a> section, it menthions:</p>
+<blockquote>
+<p>This is legal as long as it does not create a conflict. A general rule of thumb is that values always conflict with other values of the same name unless they are declared as namespaces, types will conflict if they are declared with a type alias declaration (type s = string), and namespaces never conflict.</p>
+</blockquote>
+<p>You have to make sure your <code>identifier</code> does not conflict, the compiler is smart enough to resolve the namespace / type / value in the context, or you will get <code>error TS1128: Declaration or statement expected.</code>.</p>
+<p>Try to run this code in your environment such as in <code>ts-node</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>A</span> {
   <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>123</span>;
 }
 
@@ -105,12 +291,23 @@ But under the hood what the compiler does is pretty straight forward.</p><p>Let&
   <span style=color:#66d9ef>export</span> <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>567</span>;
 }
 </code></pre></div><p>It complaints with <code>[eval].ts:2:10 - error TS2300: Duplicate identifier 'b'.</code>.
-Since <code>A.b</code> can potentially either be <code>123</code> or <code>456</code>.</p><h3 id=using-declaration-merging-to-achieve-named-constructor-pattern>Using declaration merging to achieve named constructor pattern</h3><p>Here let&rsquo;s make some use with declaration merging.</p><p>Let&rsquo;s say I have a enum in typescript called <code>Level</code> meaning how good you are at coding:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Level</span> {
+Since <code>A.b</code> can potentially either be <code>123</code> or <code>456</code>.</p>
+<h3 id=using-declaration-merging-to-achieve-named-constructor-pattern>Using declaration merging to achieve named constructor pattern</h3>
+<p>Here let&rsquo;s make some use with declaration merging.</p>
+<p>Let&rsquo;s say I have a enum in typescript called <code>Level</code> meaning how good you are at coding:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Level</span> {
   <span style=color:#a6e22e>Newbie</span>
   <span style=color:#a6e22e>Intermediate</span>
   <span style=color:#a6e22e>Expert</span>
 }
-</code></pre></div><p>Somehow, you have a logic that say:</p><ul><li>if your <code>workOfYear</code> is less than or equal to 1, you are a <code>Newbie</code></li><li>if your <code>workOfYear</code> of year is greater than 1 and less than or equal to 5, you are an <code>Intermediate</code></li><li>if your <code>workOfYear</code> of year is greater than 5, you are an <code>Expert</code></li></ul><p>Then you can write a named constructor like this:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Level</span> {
+</code></pre></div><p>Somehow, you have a logic that say:</p>
+<ul>
+<li>if your <code>workOfYear</code> is less than or equal to 1, you are a <code>Newbie</code></li>
+<li>if your <code>workOfYear</code> of year is greater than 1 and less than or equal to 5, you are an <code>Intermediate</code></li>
+<li>if your <code>workOfYear</code> of year is greater than 5, you are an <code>Expert</code></li>
+</ul>
+<p>Then you can write a named constructor like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Level</span> {
   <span style=color:#a6e22e>Newbie</span>
   <span style=color:#a6e22e>Intermediate</span>
   <span style=color:#a6e22e>Expert</span>
@@ -123,19 +320,61 @@ Since <code>A.b</code> can potentially either be <code>123</code> or <code>456</
     <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>Level</span>.<span style=color:#a6e22e>Expert</span>;
   }
 }
-</code></pre></div><p>Now, you can simpily use <code>Level</code> like this:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// normal usage.
+</code></pre></div><p>Now, you can simpily use <code>Level</code> like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// normal usage.
 </span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>level1</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Level</span>.<span style=color:#a6e22e>Newbie</span>;
 
 <span style=color:#75715e>// convert workOfYear to enum, effectly gives Level.Expert.
 </span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>level2</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Level</span>.<span style=color:#a6e22e>fromWorkOfYear</span>(<span style=color:#ae81ff>13</span>);
-</code></pre></div><p>Actually, it is just like a feature called <a href=https://dart.dev/guides/language/language-tour#constructors>named constructor</a> in dart, which I found very useful.</p></div></div><div id=social-media-share class=has-text-centered><p><i>Sharing is caring!</i></p><br><div class=share-buttons><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Facebook. Opens in a new window."><img src=/img/icons/45px/facebook.png></a>
-<a href="https://twitter.com/intent/tweet?text=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Twitter. Opens in a new window."><img src=/img/icons/45px/twitter.png></a>
-<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Reddit. Opens in a new window."><img src=/img/icons/45px/reddit.png></a>
-<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Pinterest. Opens in a new window."><img src=/img/icons/45px/pinterest.png></a>
-<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Tumblr. Opens in a new window."><img src=/img/icons/45px/tumblr.png></a>
+</code></pre></div><p>Actually, it is just like a feature called <a href=https://dart.dev/guides/language/language-tour#constructors>named constructor</a> in dart, which I found very useful.</p>
+</div>
+</div><div id=social-media-share class=has-text-centered>
+<p><i>Sharing is caring!</i></p>
+<br>
+<div class=share-buttons>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Facebook. Opens in a new window.">
+<img src=/img/icons/45px/facebook.png>
+</a>
+<a href="https://twitter.com/intent/tweet?text=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Twitter. Opens in a new window.">
+<img src=/img/icons/45px/twitter.png>
+</a>
+<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Reddit. Opens in a new window.">
+<img src=/img/icons/45px/reddit.png>
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Pinterest. Opens in a new window.">
+<img src=/img/icons/45px/pinterest.png>
+</a>
+<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Tumblr. Opens in a new window.">
+<img src=/img/icons/45px/tumblr.png>
+</a>
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f
-			&title=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&summary=If%20you%20have%20written%20Swift%2c%20there%20is%20an%20extension%20pattern%20that%20is%20pretty%20neat%20and%20handy.&source=rafed123.github.io" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on LinkedIn. Opens in a new window."><img src=/img/icons/45px/linkedin.png></a>
-<a href="mailto:?subject=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" title="Share via Email. Opens in a new window."><img src=/img/icons/45px/mail.png></a></div></div><br><div id=disqus_thread></div><script type=text/javascript>(function(){if(window.location.hostname=="localhost")
-return;var dsq=document.createElement('script');dsq.type='text/javascript';dsq.async=true;var disqus_shortname='toastcheng';dsq.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(dsq);})();</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript></div></div><script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script><gcse:searchresults-only></gcse:searchresults-only><footer class="footer has-background-dark"><div class="content has-text-centered has-text-white"><p>© 2020 Ramium. Powered by
-<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>Hugo</a>. Theme
-<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>Ramium.</a></p></div></footer></body></html>
+			&title=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&summary=If%20you%20have%20written%20Swift%2c%20there%20is%20an%20extension%20pattern%20that%20is%20pretty%20neat%20and%20handy.&source=rafed123.github.io" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on LinkedIn. Opens in a new window.">
+<img src=/img/icons/45px/linkedin.png>
+</a>
+<a href="mailto:?subject=TypeScript%3a%20Declaration%20merging%20as%20an%20extension&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-11-24-declaration-merging%2f" title="Share via Email. Opens in a new window.">
+<img src=/img/icons/45px/mail.png>
+</a>
+</div>
+</div>
+<br>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='toastcheng',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+</div>
+</div>
+<script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script>
+<gcse:searchresults-only></gcse:searchresults-only>
+<footer class="footer has-background-dark">
+<div class="content has-text-centered has-text-white">
+<p>
+© 2020 Ramium. Powered by
+<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>
+Hugo</a>. Theme
+<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>
+Ramium.
+</a>
+</p>
+</div>
+</footer>
+</body>
+</html>

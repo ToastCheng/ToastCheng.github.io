@@ -1,25 +1,188 @@
-<!doctype html><html lang=en-us><head><title>Goroutine: Process, Thread, Goroutine |
-ShihCheng Tu</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?"><meta property="og:title" content="Goroutine: process, thread, goroutine"><meta property="og:description" content="Goroutine is a interesting concept, but how does it relate to the concept of thread?"><meta property="og:type" content="article"><meta property="og:url" content="https://toastcheng.github.io/posts/2020-10-13-goroutine/"><meta property="article:published_time" content="2000-10-13T00:43:00+08:00"><meta property="article:modified_time" content="2000-10-13T00:43:00+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Goroutine: process, thread, goroutine"><meta name=twitter:description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?"><meta itemprop=name content="Goroutine: process, thread, goroutine"><meta itemprop=description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?"><meta itemprop=datePublished content="2000-10-13T00:43:00+08:00"><meta itemprop=dateModified content="2000-10-13T00:43:00+08:00"><meta itemprop=wordCount content="388"><meta itemprop=keywords content="golang,goroutine,backend,"><link rel=canonical href=https://toastcheng.github.io/posts/2020-10-13-goroutine/><link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico><link rel=stylesheet href=/css/font-awesome.min.css><link rel=stylesheet href=/css/bulma.min.css><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-168042428-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script><script src=/js/ramium.js></script><link rel=stylesheet href=/css/ramium.css></head><body><nav class="navbar is-dark" role=navigation aria-label="main navigation"><div class=navbar-brand><a class=navbar-item href=/><strong>ShihCheng Tu</strong></a>
-<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample><span aria-hidden=true></span><span aria-hidden=true></span><span aria-hidden=true></span></a></div><div id=navbarBasicExample class=navbar-menu><div class=navbar-start><a class=navbar-item href=/>Home</a><div class="navbar-item has-dropdown is-hoverable"><a class=navbar-link>This Blog</a><div class=navbar-dropdown><a class=navbar-item href=/tags/>All Tags</a>
+<!doctype html><html lang=en-us>
+<head><title>
+Goroutine: Process, Thread, Goroutine |
+ShihCheng Tu</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name=description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?
+    ">
+<meta property="og:title" content="Goroutine: process, thread, goroutine">
+<meta property="og:description" content="Goroutine is a interesting concept, but how does it relate to the concept of thread?">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://toastcheng.github.io/posts/2020-10-13-goroutine/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2000-10-13T00:43:00+08:00">
+<meta property="article:modified_time" content="2000-10-13T00:43:00+08:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Goroutine: process, thread, goroutine">
+<meta name=twitter:description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?">
+<meta itemprop=name content="Goroutine: process, thread, goroutine">
+<meta itemprop=description content="Goroutine is a interesting concept, but how does it relate to the concept of thread?"><meta itemprop=datePublished content="2000-10-13T00:43:00+08:00">
+<meta itemprop=dateModified content="2000-10-13T00:43:00+08:00">
+<meta itemprop=wordCount content="388">
+<meta itemprop=keywords content="golang,goroutine,backend,">
+<link rel=canonical href=https://toastcheng.github.io/posts/2020-10-13-goroutine/>
+<link rel=icon type=image/png href=https://toastcheng.github.ioimage/favicon.ico>
+<link rel=stylesheet href=/css/font-awesome.min.css>
+<link rel=stylesheet href=/css/bulma.min.css>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-168042428-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script src=/js/ramium.js></script>
+<link rel=stylesheet href=/css/ramium.css>
+</head>
+<body><nav class="navbar is-dark" role=navigation aria-label="main navigation">
+<div class=navbar-brand>
+<a class=navbar-item href=/>
+<strong>ShihCheng Tu </strong>
+</a>
+<a role=button class="navbar-burger burger" aria-label=menu aria-expanded=false data-target=navbarBasicExample>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+<span aria-hidden=true></span>
+</a>
+</div>
+<div id=navbarBasicExample class=navbar-menu>
+<div class=navbar-start>
+<a class=navbar-item href=/>Home</a>
+<div class="navbar-item has-dropdown is-hoverable">
+<a class=navbar-link>This Blog</a>
+<div class=navbar-dropdown>
+<a class=navbar-item href=/tags/>All Tags</a>
 <a class=navbar-item href=/sections/>All Sections</a>
-<a class=navbar-item href=/posts/>All Posts</a></div></div><a class=navbar-item href=/author/>Author</a></div><div class=navbar-end><a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank><i class="fa fa-github fa-2x"></i></a><div class=navbar-item><form id=cse-search-box-form-id onsubmit="return executeQuery();" role=search><div class="field has-addons"><div class="control is-expanded"><input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome></div><div class=control><button type=submit class="button is-black">
-<i class="fa fa-search"></i></a></button></div></div></form></div></div></div></nav><div class="columns is-centered"><div id=page-body class="column is-7"><div class="content blog"><h1>Goroutine: Process, Thread, Goroutine</h1><div id=infobar class="level is-mobile"><div class=level-left><div class=level-item><p class="subtitle info date">Oct 13, 2000</p></div><div class=level-item><p class="subtitle info">2 mins read</p></div></div><div class="level-right is-hidden-touch"><div class=tags><a class="tag is-dark is-rounded" href=/tags/golang>Golang</a>
+<a class=navbar-item href=/posts/>All Posts</a>
+</div>
+</div>
+<a class=navbar-item href=/author/>Author</a>
+</div>
+<div class=navbar-end>
+<a class="navbar-item navgithub" href=https://github.com/toastcheng/ target=_blank>
+<i class="fa fa-github fa-2x"></i>
+</a>
+<div class=navbar-item>
+<form id=cse-search-box-form-id onsubmit="return executeQuery()" role=search>
+<div class="field has-addons">
+<div class="control is-expanded">
+<input id=cse-search-input-box-id size=15 class=input type=text autocomplete=off placeholder="&#xf1a0; Google search" style=font-family:Arial,FontAwesome>
+</div>
+<div class=control>
+<button type=submit class="button is-black">
+<i class="fa fa-search"></i>
+</a>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</nav><div class="columns is-centered">
+<div id=page-body class="column is-7">
+<div class="content blog">
+<h1>Goroutine: Process, Thread, Goroutine</h1>
+<div id=infobar class="level is-mobile">
+<div class=level-left>
+<div class=level-item>
+<p class="subtitle info date">Oct 13, 2000
+</p>
+</div>
+<div class=level-item>
+<p class="subtitle info">
+2 mins read
+</p>
+</div>
+</div>
+<div class="level-right is-hidden-touch">
+<div class=tags>
+<a class="tag is-dark is-rounded" href=/tags/golang>Golang</a>
 <a class="tag is-dark is-rounded" href=/tags/goroutine>Goroutine</a>
-<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a></div></div></div><div class="tags is-hidden-desktop"><a class="tag is-dark is-rounded" href=/tags/golang>Golang</a>
+<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a>
+</div>
+</div>
+</div>
+<div class="tags is-hidden-desktop">
+<a class="tag is-dark is-rounded" href=/tags/golang>Golang</a>
 <a class="tag is-dark is-rounded" href=/tags/goroutine>Goroutine</a>
-<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a></div><div class=blog-text><p>Goroutine is a interesting concept, but how does it relate to the concept of thread? or other traditional OS stuff?</p><p>As programming in Go, this question occasionally comes up to my mind. After some research, I decide to write it down :).</p><h3 id=basic-os-knowledge-process-thread-time-slicing>Basic OS knowledge: Process, Thread, Time slicing</h3><p>In OS&rsquo;s aspect, it&rsquo;s all about scheduling. OS has the power to decides how to allots CPU to processes. Naturally there will be a lot of processes running at the same time in your computer. When you ask the OS to run a program, a process will be created for you. Such as browser, PDF reader, Spotify, and a lot of background processes.</p><p><code>// TODO: figure here</code></p><p>Let&rsquo;s say there are 100 process existing. What OS does is to schedule them, make sure all of them get a limited time to access the CPU, that is called time slicing, the OS slice the time for each process.</p><p><code>// TODO: figure here</code></p><p>What about thread?
-Thread is helpful since a program may be complicated. Take browser as an example, you may have multiple tabs browsing different web pages. If the program processes purly sequentially, you can do nothing on a new tab until all the old tab done their jobs, which is not a smooth user experience. When thread comes into play, every thread can get a partial time slice to execute. In that the task that should be run parallel could be run in different thread, but within the same process.</p><p>Initially when a process is created, within that process, a thread is created as well.
-So, it&rsquo;s basically time slicing again, but in different level.</p><p><code>// TODO: figure here</code></p><p>A thread is lighter than a process, by lighter, it means it is faster to create, to terminate, and it is more space efficient. In other word, you can have things done more efficiently.</p><p>What if there is something that is more lighter than a thread?</p><h3 id=goroutine>Goroutine</h3><p>Now, what goroutine does is to push this time slicing concept further.
-Before jumping into it, there is some concept worth to take a look.</p><p><code>P</code>: Processor, (may be logical).
+<a class="tag is-dark is-rounded" href=/tags/backend>Backend</a>
+</div>
+<div class=blog-text>
+<p>Goroutine is a interesting concept, but how does it relate to the concept of thread? or other traditional OS stuff?</p>
+<p>As programming in Go, this question occasionally comes up to my mind. After some research, I decide to write it down :).</p>
+<h3 id=basic-os-knowledge-process-thread-time-slicing>Basic OS knowledge: Process, Thread, Time slicing</h3>
+<p>In OS&rsquo;s aspect, it&rsquo;s all about scheduling. OS has the power to decides how to allots CPU to processes. Naturally there will be a lot of processes running at the same time in your computer. When you ask the OS to run a program, a process will be created for you. Such as browser, PDF reader, Spotify, and a lot of background processes.</p>
+<p><code>// TODO: figure here</code></p>
+<p>Let&rsquo;s say there are 100 process existing. What OS does is to schedule them, make sure all of them get a limited time to access the CPU, that is called time slicing, the OS slice the time for each process.</p>
+<p><code>// TODO: figure here</code></p>
+<p>What about thread?
+Thread is helpful since a program may be complicated. Take browser as an example, you may have multiple tabs browsing different web pages. If the program processes purly sequentially, you can do nothing on a new tab until all the old tab done their jobs, which is not a smooth user experience. When thread comes into play, every thread can get a partial time slice to execute. In that the task that should be run parallel could be run in different thread, but within the same process.</p>
+<p>Initially when a process is created, within that process, a thread is created as well.
+So, it&rsquo;s basically time slicing again, but in different level.</p>
+<p><code>// TODO: figure here</code></p>
+<p>A thread is lighter than a process, by lighter, it means it is faster to create, to terminate, and it is more space efficient. In other word, you can have things done more efficiently.</p>
+<p>What if there is something that is more lighter than a thread?</p>
+<h3 id=goroutine>Goroutine</h3>
+<p>Now, what goroutine does is to push this time slicing concept further.
+Before jumping into it, there is some concept worth to take a look.</p>
+<p><code>P</code>: Processor, (may be logical).
 <code>M</code>: Machine, OS thread.
-<code>G</code>: Goroutine.</p><p>When does context switch take place?</p><ol><li>Keyword <code>go</code></li><li>Garbage Collection</li><li>System call</li><li>Blocked by atomic, mutex or channel operation</li></ol><p>Net poll</p><p>Work stealing</p><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch#:~:text=Process%20context%20switching%20involves%20switching%20the%20memory%20address%20space.&text=Thread%20switching%20is%20context%20switching,processes%20is%20just%20process%20switching)">https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch#:~:text=Process%20context%20switching%20involves%20switching%20the%20memory%20address%20space.&text=Thread%20switching%20is%20context%20switching,processes%20is%20just%20process%20switching)</a>.</p><p><code>// TODO:</code></p></div></div><div id=social-media-share class=has-text-centered><p><i>Sharing is caring!</i></p><br><div class=share-buttons><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Facebook. Opens in a new window."><img src=/img/icons/45px/facebook.png></a>
-<a href="https://twitter.com/intent/tweet?text=Goroutine%3a%20process%2c%20thread%2c%20goroutine&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="socialMediaPopUp(this.href,'',500,500);return false;" title="Share on Twitter. Opens in a new window."><img src=/img/icons/45px/twitter.png></a>
-<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Reddit. Opens in a new window."><img src=/img/icons/45px/reddit.png></a>
-<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Pinterest. Opens in a new window."><img src=/img/icons/45px/pinterest.png></a>
-<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on Tumblr. Opens in a new window."><img src=/img/icons/45px/tumblr.png></a>
+<code>G</code>: Goroutine.</p>
+<p>When does context switch take place?</p>
+<ol>
+<li>Keyword <code>go</code></li>
+<li>Garbage Collection</li>
+<li>System call</li>
+<li>Blocked by atomic, mutex or channel operation</li>
+</ol>
+<p>Net poll</p>
+<p>Work stealing</p>
+<p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch#:~:text=Process%20context%20switching%20involves%20switching%20the%20memory%20address%20space.&text=Thread%20switching%20is%20context%20switching,processes%20is%20just%20process%20switching)">https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch#:~:text=Process%20context%20switching%20involves%20switching%20the%20memory%20address%20space.&text=Thread%20switching%20is%20context%20switching,processes%20is%20just%20process%20switching)</a>.</p>
+<p><code>// TODO: </code></p>
+</div>
+</div><div id=social-media-share class=has-text-centered>
+<p><i>Sharing is caring!</i></p>
+<br>
+<div class=share-buttons>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Facebook. Opens in a new window.">
+<img src=/img/icons/45px/facebook.png>
+</a>
+<a href="https://twitter.com/intent/tweet?text=Goroutine%3a%20process%2c%20thread%2c%20goroutine&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="return socialMediaPopUp(this.href,'',500,500),!1" title="Share on Twitter. Opens in a new window.">
+<img src=/img/icons/45px/twitter.png>
+</a>
+<a href="http://www.reddit.com/submit?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Reddit. Opens in a new window.">
+<img src=/img/icons/45px/reddit.png>
+</a>
+<a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Pinterest. Opens in a new window.">
+<img src=/img/icons/45px/pinterest.png>
+</a>
+<a href="http://www.tumblr.com/share/link?url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on Tumblr. Opens in a new window.">
+<img src=/img/icons/45px/tumblr.png>
+</a>
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f
-			&title=Goroutine%3a%20process%2c%20thread%2c%20goroutine&summary=Goroutine%20is%20a%20interesting%20concept%2c%20but%20how%20does%20it%20relate%20to%20the%20concept%20of%20thread%3f&source=rafed123.github.io" onclick="socialMediaPopUp(this.href,'',900,500);return false;" title="Share on LinkedIn. Opens in a new window."><img src=/img/icons/45px/linkedin.png></a>
-<a href="mailto:?subject=Goroutine%3a%20process%2c%20thread%2c%20goroutine&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" title="Share via Email. Opens in a new window."><img src=/img/icons/45px/mail.png></a></div></div><br><div id=disqus_thread></div><script type=text/javascript>(function(){if(window.location.hostname=="localhost")
-return;var dsq=document.createElement('script');dsq.type='text/javascript';dsq.async=true;var disqus_shortname='toastcheng';dsq.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(dsq);})();</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript></div></div><script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script><gcse:searchresults-only></gcse:searchresults-only><footer class="footer has-background-dark"><div class="content has-text-centered has-text-white"><p>© 2020 Ramium. Powered by
-<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>Hugo</a>. Theme
-<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>Ramium.</a></p></div></footer></body></html>
+			&title=Goroutine%3a%20process%2c%20thread%2c%20goroutine&summary=Goroutine%20is%20a%20interesting%20concept%2c%20but%20how%20does%20it%20relate%20to%20the%20concept%20of%20thread%3f&source=rafed123.github.io" onclick="return socialMediaPopUp(this.href,'',900,500),!1" title="Share on LinkedIn. Opens in a new window.">
+<img src=/img/icons/45px/linkedin.png>
+</a>
+<a href="mailto:?subject=Goroutine%3a%20process%2c%20thread%2c%20goroutine&body=Check out this site https%3a%2f%2ftoastcheng.github.io%2fposts%2f2020-10-13-goroutine%2f" title="Share via Email. Opens in a new window.">
+<img src=/img/icons/45px/mail.png>
+</a>
+</div>
+</div>
+<br>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='toastcheng',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+</div>
+</div>
+<script async src="https://cse.google.com/cse.js?cx=Engineering%20blog"></script>
+<gcse:searchresults-only></gcse:searchresults-only>
+<footer class="footer has-background-dark">
+<div class="content has-text-centered has-text-white">
+<p>
+© 2020 Ramium. Powered by
+<a class=has-text-light href=https://github.com/gohugoio/hugo target=_blank>
+Hugo</a>. Theme
+<a class=has-text-light href=https://github.com/rafed123/ramium/ target=_blank>
+Ramium.
+</a>
+</p>
+</div>
+</footer>
+</body>
+</html>
